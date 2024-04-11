@@ -1,12 +1,12 @@
 [project]
 name = "sprak"
-version = "1.0.0"
+version = "1.0.0.post1"
 description = "A Python module for packing sprites into a texture atlas."
 authors = [{name="Andrew Kennedy"}]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "aseprite_reader",
+    "aseprite-reader",
     "pillow",
 ]
 classifiers = [
