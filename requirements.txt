@@ -1,1 +1,2 @@
-Pillow==10.3.0
+aseprite-reader~=1.0.0
+pillow~=10.3.0

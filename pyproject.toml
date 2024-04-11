@@ -1,0 +1,24 @@
+[project]
+name = "sprak"
+version = "1.0.0"
+description = "A Python module for packing sprites into a texture atlas."
+authors = [{name="Andrew Kennedy"}]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aseprite_reader",
+    "pillow",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+keywords = ["aseprite", "pygame", "game development"]
+
+[project.urls]
+Homepage = "https://github.com/kennedy0/sprak"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
