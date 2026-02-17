@@ -42,7 +42,7 @@ class SpritePacker:
         self._atlas_height = height
 
     def set_atlas_step(self, step: int) -> None:
-        """Set the step size that the atlas increments when it increase its size."""
+        """Set the step size that the atlas increments when it increases its size."""
         self._atlas_step = step
 
     def add_source_folder(self, folder_path: Path) -> None:

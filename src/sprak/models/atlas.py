@@ -41,7 +41,6 @@ class Atlas:
 
     def pack(self) -> None:
         """Pack all frames into the atlas."""
-        print("Packing frames...")
         self.sort_frames_by_height()
         while True:
             if self.place_frames():
@@ -49,7 +48,6 @@ class Atlas:
             else:
                 self.increase_atlas_size()
 
-        print("Frame packing complete!")
         self._frames_packed = True
 
     def sort_frames_by_height(self) -> None:
@@ -146,7 +144,6 @@ class Atlas:
         if not self._frames_packed:
             self.pack()
 
-        print(f"Writing image ({self.width} x {self.height}): {image_file.as_posix()}")
         image = Image.new("RGBA", size=(self.width, self.height))
         for frame in self.frames:
             # Skip completely transparent images
@@ -159,8 +156,6 @@ class Atlas:
 
     def write_frame_data(self, data_file: Path) -> None:
         """Write the frame data to a file."""
-        print(f"Writing frame data: {data_file.as_posix()}")
-
         # Sort frames alphabetically
         frames = sorted(self.frames, key=lambda f: f.name)
 
