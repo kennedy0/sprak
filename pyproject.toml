@@ -1,24 +1,28 @@
 [project]
 name = "sprak"
-version = "1.0.0.post1"
-description = "A Python module for packing sprites into a texture atlas."
-authors = [{name="Andrew Kennedy"}]
+version = "0.1.0"
+description = "Pack sprites into a texture atlas"
 readme = "README.md"
+authors = [
+    { name = "akennedy", email = "andrewjacobkennedy@gmail.com" }
+]
 requires-python = ">=3.12"
 dependencies = [
-    "aseprite-reader",
-    "pillow",
+    "aseprite-reader>=1.1.0",
+    "pillow>=12.1.1",
 ]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
-keywords = ["aseprite", "pygame", "game development"]
 
 [project.urls]
 Homepage = "https://github.com/kennedy0/sprak"
 
+[tool.ruff]
+line-length = 120
+
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.9.10,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.1",
+]

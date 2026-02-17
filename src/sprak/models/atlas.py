@@ -34,12 +34,12 @@ class Atlas:
         self.frames: list[Frame] = []
 
     def add_frames(self, frames: list[Frame]) -> None:
-        """ Add multiple frames to the atlas. """
+        """Add multiple frames to the atlas."""
         self.frames += frames
 
     def pack(self) -> None:
-        """ Pack all frames into the atlas. """
-        print(f"Packing frames...")
+        """Pack all frames into the atlas."""
+        print("Packing frames...")
         self.sort_frames_by_height()
         while True:
             if self.place_frames():
@@ -52,13 +52,13 @@ class Atlas:
         self._frames_packed = True
 
     def sort_frames_by_height(self) -> None:
-        """ Sort frames by height.
+        """Sort frames by height.
         This seems to leave the least amount of wasted space when we split regions horizontally.
         """
         self.frames.sort(key=lambda f: f.frame_height, reverse=True)
 
     def place_frames(self) -> bool:
-        """ Place all frames onto the atlas.
+        """Place all frames onto the atlas.
         If the function is successful (that is, it places all frames without running out of space), it will return True.
         Otherwise, it will return False.
         """
@@ -79,11 +79,11 @@ class Atlas:
         return True
 
     def reset_regions(self) -> None:
-        """ Reset the list of free regions. """
+        """Reset the list of free regions."""
         self._regions = [Rect(0, 0, self.width, self.height)]
 
     def find_region(self, frame: Frame) -> Optional[Rect]:
-        """ Find a free region to pack a frame.
+        """Find a free region to pack a frame.
         If no valid position is found, None is returned.
         """
         for region in self._regions:
@@ -93,7 +93,7 @@ class Atlas:
         return None
 
     def place_frame(self, frame: Frame, region: Rect) -> None:
-        """ Place a frame onto the atlas. """
+        """Place a frame onto the atlas."""
         frame.x = region.x
         frame.y = region.y
 
@@ -106,7 +106,7 @@ class Atlas:
         self._regions.sort(key=lambda r: r.w * r.h)
 
     def split_region(self, region: Rect, y: int, x: int) -> None:
-        """ Horizontally split a region into sub-regions.
+        """Horizontally split a region into sub-regions.
                 X
         +------+--------+
         |######|   top  |
@@ -136,23 +136,23 @@ class Atlas:
             self._regions.append(bottom)
 
     def print_progress(self, message: str, frame_number: int) -> None:
-        """ Print a progress message. """
+        """Print a progress message."""
         perc = math.floor((float(frame_number) / len(self.frames)) * 100)
         msg = f"\r{message} {frame_number} / {len(self.frames)} ({perc}%)"
         self._progress_message_length = len(msg)
         print(msg, end="")
 
     def clear_progress(self) -> None:
-        """ Clear the progress message. """
+        """Clear the progress message."""
         print(f"\r{' ' * self._progress_message_length}\r", end="")
 
     def increase_atlas_size(self) -> None:
-        """ Increase the size of the atlas. """
+        """Increase the size of the atlas."""
         self.width += IMAGE_SIZE_STEP
         self.height += IMAGE_SIZE_STEP
 
     def write_image(self, image_file: Path) -> None:
-        """ Write the atlas out to a file. """
+        """Write the atlas out to a file."""
         if not self._frames_packed:
             self.pack()
 
@@ -168,7 +168,7 @@ class Atlas:
         image.save(image_file)
 
     def write_frame_data(self, data_file: Path) -> None:
-        """ Write the frame data to a file. """
+        """Write the frame data to a file."""
         print(f"Writing frame data: {data_file.as_posix()}")
 
         # Sort frames alphabetically
@@ -180,12 +180,12 @@ class Atlas:
             frame_data[frame.name] = frame.to_dict()
 
         # Write frame data to file
-        with data_file.open('w') as fp:
+        with data_file.open("w") as fp:
             data_str = json.dumps(frame_data, indent=2)
             fp.write(data_str)
 
     def render_animation(self, video_file: Path, resolution_x: int = 1280, resolution_y: int = 720) -> None:
-        """ Render an animation of the sprite packing to a file. """
+        """Render an animation of the sprite packing to a file."""
         with TemporaryDirectory() as tmp:
             temp_dir = Path(tmp)
             temp_dir.mkdir(parents=True, exist_ok=True)
@@ -213,14 +213,21 @@ class Atlas:
                 ffmpeg,
                 "-y",
                 "-hide_banner",
-                "-loglevel", "quiet",
-                "-framerate", "60",
-                "-i", src.as_posix(),
-                "-crf", "18",
-                "-c:v", "libx264",
-                "-vf", f"scale={resolution_x}:{resolution_y}:force_original_aspect_ratio=increase:flags=neighbor",
-                "-pix_fmt", "yuv420p",
-                dst.as_posix()
+                "-loglevel",
+                "quiet",
+                "-framerate",
+                "60",
+                "-i",
+                src.as_posix(),
+                "-crf",
+                "18",
+                "-c:v",
+                "libx264",
+                "-vf",
+                f"scale={resolution_x}:{resolution_y}:force_original_aspect_ratio=increase:flags=neighbor",
+                "-pix_fmt",
+                "yuv420p",
+                dst.as_posix(),
             ]
 
             proc = subprocess.Popen(cmd)
