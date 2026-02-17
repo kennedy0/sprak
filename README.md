@@ -1,7 +1,11 @@
 `sprak` is a Python module for packing sprites into a texture atlas.
 
-## Usage
+## Installation
+```sh
+pip install sprak
+```
 
+## Usage
 ```python
 from pathlib import Path
 
