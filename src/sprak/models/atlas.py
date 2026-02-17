@@ -29,6 +29,9 @@ class Atlas:
         # The amount that the atlas increases in size
         self.step_size: int = 64
 
+        # The amount of padding to add between sprites
+        self.padding: int = 0
+
         # The list of frames in the atlas
         self.frames: list[Frame] = []
 
@@ -38,7 +41,6 @@ class Atlas:
 
     def pack(self) -> None:
         """Pack all frames into the atlas."""
-        print("Packing frames...")
         self.sort_frames_by_height()
         while True:
             if self.place_frames():
@@ -46,7 +48,6 @@ class Atlas:
             else:
                 self.increase_atlas_size()
 
-        print("Frame packing complete!")
         self._frames_packed = True
 
     def sort_frames_by_height(self) -> None:
@@ -83,7 +84,9 @@ class Atlas:
         If no valid position is found, None is returned.
         """
         for region in self._regions:
-            if frame.frame_width <= region.w and frame.frame_height <= region.h:
+            w = frame.frame_width + self.padding
+            h = frame.frame_height + self.padding
+            if w <= region.w and h <= region.h:
                 return region
 
         return None
@@ -94,8 +97,8 @@ class Atlas:
         frame.y = region.y
 
         # Split the leftover space in the region
-        split_y = frame.y + frame.frame_height
-        split_x = frame.x + frame.frame_width
+        split_y = frame.y + frame.frame_height + self.padding
+        split_x = frame.x + frame.frame_width + self.padding
         self.split_region(region, split_y, split_x)
 
         # Sort regions from smallest to largest area
@@ -141,7 +144,6 @@ class Atlas:
         if not self._frames_packed:
             self.pack()
 
-        print(f"Writing image ({self.width} x {self.height}): {image_file.as_posix()}")
         image = Image.new("RGBA", size=(self.width, self.height))
         for frame in self.frames:
             # Skip completely transparent images
@@ -154,8 +156,6 @@ class Atlas:
 
     def write_frame_data(self, data_file: Path) -> None:
         """Write the frame data to a file."""
-        print(f"Writing frame data: {data_file.as_posix()}")
-
         # Sort frames alphabetically
         frames = sorted(self.frames, key=lambda f: f.name)
 
