@@ -29,6 +29,9 @@ class Atlas:
         # The amount that the atlas increases in size
         self.step_size: int = 64
 
+        # The amount of padding to add between sprites
+        self.padding: int = 0
+
         # The list of frames in the atlas
         self.frames: list[Frame] = []
 
@@ -83,7 +86,9 @@ class Atlas:
         If no valid position is found, None is returned.
         """
         for region in self._regions:
-            if frame.frame_width <= region.w and frame.frame_height <= region.h:
+            w = frame.frame_width + self.padding
+            h = frame.frame_height + self.padding
+            if w <= region.w and h <= region.h:
                 return region
 
         return None
@@ -94,8 +99,8 @@ class Atlas:
         frame.y = region.y
 
         # Split the leftover space in the region
-        split_y = frame.y + frame.frame_height
-        split_x = frame.x + frame.frame_width
+        split_y = frame.y + frame.frame_height + self.padding
+        split_x = frame.x + frame.frame_width + self.padding
         self.split_region(region, split_y, split_x)
 
         # Sort regions from smallest to largest area

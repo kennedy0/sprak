@@ -12,8 +12,20 @@ class SpritePacker:
         self._atlas_width = 64
         self._atlas_height = 64
         self._atlas_step = 64
+        self._padding = 0
         self._trim_edges = True
         self._source_folders: list[Path] = []
+
+    @property
+    def padding(self) -> int:
+        """ The amount of padding to add between sprites. """
+        return self._padding
+
+    @padding.setter
+    def padding(self, value: int) -> None:
+        if value < 0:
+            raise ValueError("Padding value cannot be less than zero")
+        self._padding = value
 
     @property
     def trim_edges(self) -> bool:
@@ -53,6 +65,7 @@ class SpritePacker:
         atlas.width = self._atlas_width
         atlas.height = self._atlas_height
         atlas.step_size = self._atlas_step
+        atlas.padding = self.padding
         atlas.add_frames(frames)
         atlas.write_image(output_folder / f"{atlas_name}.png")
         atlas.write_frame_data(output_folder / f"{atlas_name}.framedata")
