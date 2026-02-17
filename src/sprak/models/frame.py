@@ -46,7 +46,6 @@ class Frame:
     def load_source_image(self, source_image: Path) -> None:
         """Load source image data."""
         image = Image.open(source_image)
-        image.getextrema()
 
         self.sprite_width = image.width
         self.sprite_height = image.height
