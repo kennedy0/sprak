@@ -1,6 +1,6 @@
 [project]
 name = "sprak"
-version = "1.3.0"
+version = "1.3.0.post1"
 description = "Pack sprites into a texture atlas"
 readme = "README.md"
 authors = [
