@@ -46,19 +46,24 @@ class Frame:
     def load_source_image(self, source_image: Path) -> None:
         """Load source image data."""
         image = Image.open(source_image)
+        image.getextrema()
 
         self.sprite_width = image.width
         self.sprite_height = image.height
+        self.frame_width = image.width
+        self.frame_height = image.height
 
-        if bbox := image.getbbox():
+        self._image = image
+
+    def trim_edges(self) -> None:
+        """ Trim transparent edges on the sprite. """
+        if bbox := self._image.getbbox():
             left, upper, right, lower = bbox
             self.offset_x = left
             self.offset_y = upper
             self.frame_width = right - left
             self.frame_height = lower - upper
-            image = image.crop(bbox)
-
-        self._image = image
+            self._image = self._image.crop(bbox)
 
     def to_dict(self) -> dict:
         """Return the frame as a dictionary that can be JSON serialized."""

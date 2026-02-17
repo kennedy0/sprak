@@ -9,7 +9,29 @@ from sprak.models.frame import Frame
 
 class SpritePacker:
     def __init__(self) -> None:
+        self._atlas_width = 64
+        self._atlas_height = 64
+        self._atlas_step = 64
+        self._trim_edges = True
         self._source_folders: list[Path] = []
+
+    @property
+    def trim_edges(self) -> bool:
+        """ If True, transparent edges on sprites will be trimmed. """
+        return self._trim_edges
+
+    @trim_edges.setter
+    def trim_edges(self, value: bool) -> None:
+        self._trim_edges = value
+
+    def set_atlas_size(self, width: int, height: int) -> None:
+        """Set the starting size of the atlas."""
+        self._atlas_width = width
+        self._atlas_height = height
+
+    def set_atlas_step(self, step: int) -> None:
+        """Set the step size that the atlas increments when it increase its size."""
+        self._atlas_step = step
 
     def add_source_folder(self, folder_path: Path) -> None:
         """Add a directory to the list of source paths that will be processed."""
@@ -23,7 +45,14 @@ class SpritePacker:
 
         frames = self._collect_frames()
 
+        if self.trim_edges:
+            for frame in frames:
+                frame.trim_edges()
+
         atlas = Atlas()
+        atlas.width = self._atlas_width
+        atlas.height = self._atlas_height
+        atlas.step_size = self._atlas_step
         atlas.add_frames(frames)
         atlas.write_image(output_folder / f"{atlas_name}.png")
         atlas.write_frame_data(output_folder / f"{atlas_name}.framedata")

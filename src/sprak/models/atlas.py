@@ -1,5 +1,4 @@
 import json
-import math
 import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -10,9 +9,6 @@ from PIL import Image
 from sprak.models.frame import Frame
 from sprak.models.rect import Rect
 from sprak.utilities import ffmpeg_utils
-
-
-IMAGE_SIZE_STEP = 64
 
 
 class Atlas:
@@ -27,8 +23,11 @@ class Atlas:
         self._progress_message_length = 0
 
         # The size of the atlas
-        self.width: int = IMAGE_SIZE_STEP
-        self.height: int = IMAGE_SIZE_STEP
+        self.width: int = 64
+        self.height: int = 64
+
+        # The amount that the atlas increases in size
+        self.step_size: int = 64
 
         # The list of frames in the atlas
         self.frames: list[Frame] = []
@@ -47,7 +46,6 @@ class Atlas:
             else:
                 self.increase_atlas_size()
 
-        self.clear_progress()
         print("Frame packing complete!")
         self._frames_packed = True
 
@@ -63,11 +61,9 @@ class Atlas:
         Otherwise, it will return False.
         """
         self.reset_regions()
-        for i, frame in enumerate(self.frames, start=1):
-            self.print_progress("Placing frame", i)
-
+        for frame in self.frames:
             # Skip completely transparent images
-            if frame.frame_width == 0 and frame.frame_height == 0:
+            if not frame.image.getbbox():
                 continue
 
             # Find a region that the frame fits in
@@ -135,21 +131,10 @@ class Atlas:
         if not bottom.is_empty:
             self._regions.append(bottom)
 
-    def print_progress(self, message: str, frame_number: int) -> None:
-        """Print a progress message."""
-        perc = math.floor((float(frame_number) / len(self.frames)) * 100)
-        msg = f"\r{message} {frame_number} / {len(self.frames)} ({perc}%)"
-        self._progress_message_length = len(msg)
-        print(msg, end="")
-
-    def clear_progress(self) -> None:
-        """Clear the progress message."""
-        print(f"\r{' ' * self._progress_message_length}\r", end="")
-
     def increase_atlas_size(self) -> None:
         """Increase the size of the atlas."""
-        self.width += IMAGE_SIZE_STEP
-        self.height += IMAGE_SIZE_STEP
+        self.width += self.step_size
+        self.height += self.step_size
 
     def write_image(self, image_file: Path) -> None:
         """Write the atlas out to a file."""
@@ -160,7 +145,7 @@ class Atlas:
         image = Image.new("RGBA", size=(self.width, self.height))
         for frame in self.frames:
             # Skip completely transparent images
-            if frame.frame_width == 0 and frame.frame_height == 0:
+            if not frame.image.getbbox():
                 continue
 
             image.paste(frame.image, box=(frame.x, frame.y))
@@ -194,10 +179,9 @@ class Atlas:
             frame_number = 1
             for frame in self.frames:
                 # Skip completely transparent images
-                if frame.frame_width == 0 and frame.frame_height == 0:
+                if not frame.image.getbbox():
                     continue
 
-                self.print_progress("Rendering frame", frame_number)
                 image.paste(frame.image, box=(frame.x, frame.y))
                 image.save(temp_dir / f"frame_{frame_number:08d}.png")
                 frame_number += 1
@@ -205,7 +189,6 @@ class Atlas:
             src = temp_dir / "frame_%08d.png"
             dst = video_file
 
-            self.clear_progress()
             print(f"Rendering video: {video_file.as_posix()}")
 
             ffmpeg = ffmpeg_utils.find_ffmpeg_executable()
