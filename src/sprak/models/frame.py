@@ -40,11 +40,11 @@ class Frame:
 
     @property
     def image(self) -> Image.Image:
-        """ The cropped image that will be placed onto the atlas. """
+        """The cropped image that will be placed onto the atlas."""
         return self._image
 
     def load_source_image(self, source_image: Path) -> None:
-        """ Load source image data. """
+        """Load source image data."""
         image = Image.open(source_image)
 
         self.sprite_width = image.width
@@ -61,16 +61,16 @@ class Frame:
         self._image = image
 
     def to_dict(self) -> dict:
-        """ Return the frame as a dictionary that can be JSON serialized. """
+        """Return the frame as a dictionary that can be JSON serialized."""
         return {
-            'name': self.name,
-            'x': self.x,
-            'y': self.y,
-            'frame_width': self.frame_width,
-            'frame_height': self.frame_height,
-            'offset_x': self.offset_x,
-            'offset_y': self.offset_y,
-            'sprite_width': self.sprite_width,
-            'sprite_height': self.sprite_height,
-            'metadata': self.metadata,
+            "name": self.name,
+            "x": self.x,
+            "y": self.y,
+            "frame_width": self.frame_width,
+            "frame_height": self.frame_height,
+            "offset_x": self.offset_x,
+            "offset_y": self.offset_y,
+            "sprite_width": self.sprite_width,
+            "sprite_height": self.sprite_height,
+            "metadata": self.metadata,
         }
