@@ -1,14 +1,11 @@
 import json
-import subprocess
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import Optional
 
 from PIL import Image
 
 from sprak.models.frame import Frame
 from sprak.models.rect import Rect
-from sprak.utilities import ffmpeg_utils
 
 
 class Atlas:
@@ -168,50 +165,3 @@ class Atlas:
         with data_file.open("w") as fp:
             data_str = json.dumps(frame_data, indent=2)
             fp.write(data_str)
-
-    def render_animation(self, video_file: Path, resolution_x: int = 1280, resolution_y: int = 720) -> None:
-        """Render an animation of the sprite packing to a file."""
-        with TemporaryDirectory() as tmp:
-            temp_dir = Path(tmp)
-            temp_dir.mkdir(parents=True, exist_ok=True)
-
-            image = Image.new("RGBA", size=(self.width, self.height))
-            frame_number = 1
-            for frame in self.frames:
-                # Skip completely transparent images
-                if not frame.image.getbbox():
-                    continue
-
-                image.paste(frame.image, box=(frame.x, frame.y))
-                image.save(temp_dir / f"frame_{frame_number:08d}.png")
-                frame_number += 1
-
-            src = temp_dir / "frame_%08d.png"
-            dst = video_file
-
-            print(f"Rendering video: {video_file.as_posix()}")
-
-            ffmpeg = ffmpeg_utils.find_ffmpeg_executable()
-            cmd = [
-                ffmpeg,
-                "-y",
-                "-hide_banner",
-                "-loglevel",
-                "quiet",
-                "-framerate",
-                "60",
-                "-i",
-                src.as_posix(),
-                "-crf",
-                "18",
-                "-c:v",
-                "libx264",
-                "-vf",
-                f"scale={resolution_x}:{resolution_y}:force_original_aspect_ratio=increase:flags=neighbor",
-                "-pix_fmt",
-                "yuv420p",
-                dst.as_posix(),
-            ]
-
-            proc = subprocess.Popen(cmd)
-            proc.communicate()
