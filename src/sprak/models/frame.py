@@ -50,6 +50,7 @@ class Frame:
             self.sprite_height = image.height
             self.frame_width = image.width
             self.frame_height = image.height
+            self._image = image
 
             if bbox := image.getbbox():
                 left, upper, right, lower = bbox
@@ -59,7 +60,6 @@ class Frame:
                 self.frame_height = lower - upper
                 self._image = image.crop(bbox)
 
-            self._image = image
 
     def to_dict(self) -> dict:
         """Return the frame as a dictionary that can be JSON serialized."""
