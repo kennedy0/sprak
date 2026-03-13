@@ -48,8 +48,6 @@ class Frame:
         with Image.open(source_image) as image:
             self.sprite_width = image.width
             self.sprite_height = image.height
-            self.frame_width = image.width
-            self.frame_height = image.height
             self._image = image
 
             if bbox := image.getbbox():
