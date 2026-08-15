@@ -1,11 +1,15 @@
+import logging
 import os
 import platform
 import shutil
 import struct
 import warnings
+from functools import cache
 from pathlib import Path
 
-_ASEPRITE_MAGIC_NUMBER = 0xA5E0
+logger = logging.getLogger("sprak")
+
+ASEPRITE_MAGIC_NUMBER = 0xA5E0
 
 
 def is_aseprite_file(file: Path) -> bool:
@@ -16,7 +20,7 @@ def is_aseprite_file(file: Path) -> bool:
         try:
             fp.seek(4)
             magic_number = struct.unpack("<H", fp.read(2))[0]
-            if magic_number == _ASEPRITE_MAGIC_NUMBER:
+            if magic_number == ASEPRITE_MAGIC_NUMBER:
                 return True
         except Exception:
             pass
@@ -24,6 +28,7 @@ def is_aseprite_file(file: Path) -> bool:
     return False
 
 
+@cache
 def get_aseprite_exe() -> str:
     """Get the path to the aseprite executable. Search is done in the following order:
     1. If the SPRAK_ASEPRITE_EXE_PATH environment variable is set, that path is used.

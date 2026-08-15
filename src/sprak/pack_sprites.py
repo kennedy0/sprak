@@ -2,13 +2,15 @@ import io
 import json
 import logging
 import math
+import subprocess
 import zipfile
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import PIL
 from PIL import Image
 
-from .aseprite_utils import is_aseprite_file
+from .aseprite_utils import get_aseprite_exe, is_aseprite_file
 from .rect import Rect
 from .sprite import Sprite
 
@@ -67,7 +69,7 @@ def pack_sprites_into_atlas(src: PathList) -> tuple[str, Image.Image]:
 
 def get_sprite_name(root: Path, file: Path) -> str:
     """Get a sprite name by using its relative path from the root directory."""
-    return file.relative_to(root).as_posix().strip("/")
+    return file.relative_to(root).with_suffix("").as_posix().strip("/")
 
 
 def get_sprites(name: str, file: Path) -> list[Sprite]:
@@ -89,6 +91,35 @@ def get_sprites(name: str, file: Path) -> list[Sprite]:
 def sprites_from_aseprite(name: str, file: Path) -> list[Sprite]:
     """Get all sprites from an aseprite file."""
     sprites = []
+
+    with TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        data_json = tmp / f"{file.stem}.json"
+        sprite_name = tmp / f"{file.stem}.0001.png"
+
+        cmd = [get_aseprite_exe()]
+        cmd += ["--batch"]
+        cmd += ["--noinapp"]
+        cmd += ["--list-tags"]
+        cmd += ["--list-slices"]
+        cmd += ["--data", data_json.absolute().as_posix()]
+        cmd += ["--format", "json-array"]
+        cmd += [file.absolute().as_posix()]
+        cmd += ["--save-as", sprite_name.as_posix()]
+        subprocess.run(cmd, check=True)
+
+        with data_json.open() as fp:
+            file_data = json.load(fp)
+            frames: list[dict] = file_data["frames"]
+            tags: list[dict] = file_data["meta"]["frameTags"]
+
+        for i, frame_data in enumerate(frames, start=1):
+            frame_name = f"{name}.{i:04d}"
+            frame_path = tmp / f"{file.stem}.{i:04d}.png"
+            sprite = sprite_from_image(frame_name, frame_path)
+            sprite.metadata.update({"source_format": "aseprite"})
+            sprites.append(sprite)
+
     return sprites
 
 
@@ -108,6 +139,8 @@ def sprite_from_image(name: str, file: Path) -> Sprite:
             sprite.offset_x = left
             sprite.offset_y = upper
             sprite.image = image.crop(bbox)
+        if image_format := image.format:
+            sprite.metadata.update({"source_format": image_format.lower()})
 
     return sprite
 
