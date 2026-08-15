@@ -1,0 +1,9 @@
+[
+  {
+    "adapter": "Debugpy",
+    "label": "main",
+    "request": "launch",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "program": "\"$ZED_WORKTREE_ROOT/src/sprak/main.py\""
+  }
+]

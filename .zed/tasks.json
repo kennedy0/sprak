@@ -1,0 +1,7 @@
+[
+  {
+    "label": "main",
+    "command": "uv run src/sprak/main.py",
+    "save": "all",
+  },
+]

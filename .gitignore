@@ -5,3 +5,5 @@ dist/
 .idea/
 .venv/
 .ruff_cache/
+test/*
+!test/sprites/

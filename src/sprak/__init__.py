@@ -1,5 +1,6 @@
-from .sprite_packer import SpritePacker
+from .pack_sprites import pack, pack_and_zip
 
 __all__ = [
-    "SpritePacker",
+    "pack",
+    "pack_and_zip",
 ]
