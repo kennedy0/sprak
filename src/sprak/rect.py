@@ -26,6 +26,10 @@ class Rect(NamedTuple):
         return self.x + self.w - 1
 
     @property
+    def area(self) -> int:
+        return self.w * self.h
+
+    @property
     def is_empty(self) -> bool:
         """Check if this rectangle has an area of zero."""
         return self.w == 0 or self.h == 0

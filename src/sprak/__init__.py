@@ -1,6 +1,4 @@
-from .pack_sprites import pack, pack_and_zip
+from .atlas import Atlas
+from .pack import pack
 
-__all__ = [
-    "pack",
-    "pack_and_zip",
-]
+__all__ = ["Atlas", "pack"]

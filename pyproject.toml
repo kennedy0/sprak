@@ -9,7 +9,11 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "pillow>=12.3",
+    "pyseq>=0.9.3",
 ]
+
+[project.scripts]
+sprak = "sprak.cli:pack_sprites"
 
 [project.urls]
 Homepage = "https://github.com/kennedy0/sprak"
@@ -21,7 +25,7 @@ line-length = 120
 extend-select = ["N"]
 
 [build-system]
-requires = ["uv_build>=0.9.10,<0.10.0"]
+requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
 
 [dependency-groups]

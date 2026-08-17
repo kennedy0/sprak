@@ -17,9 +17,7 @@ def main() -> int:
     dst_json = "test/atlas.json"
     dst_image = "test/atlas.png"
 
-    sprak.pack(src, dst_json, dst_image)
-    sprak.pack_and_zip(src, dst_zip)
-
+    sprak.pack(src, dst_zip=dst_zip, dst_json=dst_json, dst_image=dst_image)
     return 0
 
 
