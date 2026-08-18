@@ -31,5 +31,4 @@ class Rect(NamedTuple):
 
     @property
     def is_empty(self) -> bool:
-        """Check if this rectangle has an area of zero."""
-        return self.w == 0 or self.h == 0
+        return self.area == 0

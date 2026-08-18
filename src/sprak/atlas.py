@@ -1,58 +1,74 @@
 import io
 import json
-import logging
 import math
 import zipfile
 from pathlib import Path
 
 import pyseq
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 from sprak import aseprite
+from sprak.log import logger
 from sprak.rect import Rect
 from sprak.sprite import Sprite
-
-logger = logging.getLogger("sprak")
 
 
 class Atlas:
     def __init__(self) -> None:
-        self.sprites: list[Sprite] = []
-
+        self._sprites: list[Sprite] = []
+        self._sprite_names: set[str] = set()
         self._is_packed = False
         self._image = Image.new("RGBA", (0, 0))
         self._current_folder: Path | None = None
 
+    def add_sprite(self, sprite: Sprite) -> None:
+        """Add a sprite to the atlas."""
+        if sprite.name in self._sprite_names:
+            logger.error(f"a sprite named {sprite.name} is already in the atlas")
+            return
+
+        logger.debug(f"adding sprite {sprite.name}")
+        self._is_packed = False
+        self._sprites.append(sprite)
+        self._sprite_names.add(sprite.name)
+
     def add_file(self, file: Path) -> None:
-        """Add a file to the atlas."""
+        """Create sprites from a file and add them the atlas."""
         name = self._get_sprite_name(file)
         if aseprite.is_aseprite_file(file):
-            self._is_packed = False
-            self.sprites += Sprite.from_aseprite(file, name)
+            for sprite in aseprite.extract_sprites(file, name):
+                self.add_sprite(sprite)
         elif self._is_image_file(file):
-            self._is_packed = False
-            self.sprites.append(Sprite.from_image(file, name))
+            self.add_sprite(Sprite.from_image(file, name))
+        else:
+            logger.debug(f"skipping unsupported file {file.as_posix()}")
 
     def add_folder(self, folder: Path) -> None:
-        """Add a folder to the atlas."""
+        """Create sprites from a folder and add them the atlas."""
         self._current_folder = folder
 
         for root, dirs, files in folder.walk():
             for f in files:
-                # ToDO: Detect image sequences with pyseq
                 file = root / f
                 self.add_file(file)
 
         self._current_folder = None
+
+    def write_zip(self, file: str | Path) -> None:
+        """Write the atlas to a zip file."""
+        if not self._is_packed:
+            self._pack()
+
+        with zipfile.ZipFile(file, mode="w", compression=zipfile.ZIP_STORED) as zf:
+            zf.writestr("json", self._get_json_str())
+            zf.writestr("png", self._get_image_bytes())
 
     def write_json(self, file: str | Path) -> None:
         """Write the atlas data to a JSON file."""
         if not self._is_packed:
             self._pack()
 
-        file = Path(file)
-        logger.info(f"Writing {file.absolute().as_posix()}")
-        with file.open("w") as fp:
+        with open(file, "w") as fp:
             fp.write(self._get_json_str())
 
     def write_image(self, file: str | Path) -> None:
@@ -60,29 +76,24 @@ class Atlas:
         if not self._is_packed:
             self._pack()
 
-        file = Path(file)
-        logger.info(f"Writing {file.absolute().as_posix()}")
         self._image.save(file)
 
-    def write_zip(self, file: str | Path) -> None:
-        """Write the atlas to a zip file."""
-        if not self._is_packed:
-            self._pack()
+    def to_dict(self) -> dict:
+        """Returns the atlas data as a dictionary."""
+        return {"sprites": {s.name: s.to_dict() for s in self._sprites}}
 
-        file = Path(file)
-        logger.info(f"Writing {file.absolute().as_posix()}")
-        with zipfile.ZipFile(file, mode="w", compression=zipfile.ZIP_STORED) as zf:
-            zf.writestr("json", self._get_json_str())
-            zf.writestr("png", self._get_image_bytes())
-
-    # noinspection PyMethodMayBeStatic
     def _is_image_file(self, file: Path) -> bool:
+        """Check if the file can be opened by PIL."""
         try:
             with Image.open(file) as im:
                 im.verify()
             return True
-        except Exception:
-            return False
+        except UnidentifiedImageError:
+            pass
+        except Exception as e:  # noqa: BLE001
+            logger.error(e)
+
+        return False
 
     def _get_sprite_name(self, file: Path) -> str:
         """Get a sprite name by using its file name relative to the source folder that it was added from."""
@@ -94,13 +105,12 @@ class Atlas:
     def _pack(self) -> None:
         """Pack the sprites into the atlas."""
         size = self._calculate_starting_size()
-        self.sprites.sort(key=lambda s: s.height, reverse=True)
+        self._sprites.sort(key=lambda s: s.height, reverse=True)
 
         while True:
-            logger.debug(f"Packing sprites on atlas size of {size}x{size}")
             regions = [Rect(0, 0, size, size)]
             overflow = False
-            for sprite in self.sprites:
+            for sprite in self._sprites:
                 # Skip completely transparent images
                 if sprite.is_empty:
                     continue
@@ -119,7 +129,6 @@ class Atlas:
                     regions.sort(key=lambda rect: rect.area)
 
                 else:
-                    logger.debug(f"{sprite.name} overflowed")
                     overflow = True
                     break
 
@@ -131,7 +140,7 @@ class Atlas:
 
         # Create image
         self._image = Image.new("RGBA", (size, size))
-        for sprite in self.sprites:
+        for sprite in self._sprites:
             if sprite.image:
                 self._image.paste(sprite.image, box=(sprite.x, sprite.y))
 
@@ -142,10 +151,9 @@ class Atlas:
         We assume the algorithm will be 100% efficient, meaning that the area of the atlas will be exactly the sum of the areas of the sprites.
         Of course it won't, but rounding to the next power of 2 gives us some padding, which is a reasonable place to start.
         """
-        area = math.sqrt(sum([s.area for s in self.sprites]))
+        area = math.sqrt(sum([s.area for s in self._sprites]))
         return round_pow2(area)
 
-    # noinspection PyMethodMayBeStatic
     def _find_region(self, sprite: Sprite, regions: list[Rect]) -> Rect | None:
         """Find a region that the sprite fits into."""
         for region in regions:
@@ -154,7 +162,6 @@ class Atlas:
 
         return None
 
-    # noinspection PyMethodMayBeStatic
     def _split_region(self, region: Rect, x: int, y: int) -> list[Rect]:
         """Horizontally split a region into top and bottom sub-regions.
                X
@@ -186,7 +193,7 @@ class Atlas:
 
     def _get_json_str(self) -> str:
         """Get the atlas data as a JSON string."""
-        return json.dumps(sorted([s.to_dict() for s in self.sprites], key=lambda x: x.get("name")), indent=2)
+        return json.dumps(self.to_dict(), indent=2, sort_keys=True)
 
     def _get_image_bytes(self) -> bytes:
         """Get the image data as bytes."""

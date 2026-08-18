@@ -1,13 +1,15 @@
-import logging
+import json
 import os
 import platform
 import shutil
 import struct
+import subprocess
 import warnings
 from functools import cache
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
-logger = logging.getLogger("sprak")
+from sprak.sprite import Sprite
 
 ASEPRITE_MAGIC_NUMBER = 0xA5E0
 
@@ -22,10 +24,52 @@ def is_aseprite_file(file: Path) -> bool:
             magic_number = struct.unpack("<H", fp.read(2))[0]
             if magic_number == ASEPRITE_MAGIC_NUMBER:
                 return True
-        except Exception:
+        except (ValueError, struct.error):
             pass
 
     return False
+
+
+def extract_sprites(file: Path, name: str) -> list[Sprite]:
+    """Extract sprites from an aseprite file."""
+    sprites = []
+
+    with TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        tmp_json = tmp / f"{file.stem}.json"
+        tmp_sprite = tmp / f"{file.stem}.0001.png"
+
+        cmd = [get_aseprite_exe()]
+        cmd += ["--batch"]
+        cmd += ["--noinapp"]
+        cmd += ["--list-tags"]
+        cmd += ["--list-slices"]
+        cmd += ["--data", tmp_json.absolute().as_posix()]
+        cmd += ["--format", "json-array"]
+        cmd += [file.absolute().as_posix()]
+        cmd += ["--save-as", tmp_sprite.as_posix()]
+        subprocess.run(cmd, check=True)
+
+        with tmp_json.open() as fp:
+            file_data = json.load(fp)
+            frames: list[dict] = file_data["frames"]
+            tags: list[dict] = file_data["meta"]["frameTags"]
+            # import pprint
+            # pprint.pprint(tags)
+
+        for frame_number, frame_data in enumerate(frames, start=1):
+            if len(frames) > 1:
+                sprite_name = f"{name}.{frame_number:04d}"
+            else:
+                sprite_name = f"{name}"
+            frame_path = tmp / f"{file.stem}.{frame_number:04d}.png"
+            sprite = Sprite.from_image(frame_path, sprite_name)
+            sprite.source_file = file.as_posix()
+            sprite.frame = frame_number
+            sprite.duration = frame_data["duration"]
+            sprites.append(sprite)
+
+    return sprites
 
 
 @cache
