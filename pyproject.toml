@@ -9,7 +9,6 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "pillow>=12.3",
-    "pyseq>=0.9.3",
 ]
 
 [project.scripts]

@@ -74,15 +74,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pyseq"
-version = "0.9.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b3/50/51ab847fcaf049a9bf6c0a8483b0f02c20ca477bd6a21c269e626b2c5955/pyseq-0.9.3.tar.gz", hash = "sha256:802f81b35bfce0d5bc43d95443a789a5d674fd3f8de4f06c9ef57284bfaec86b", size = 44129, upload-time = "2026-07-25T16:33:47.118Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fd/e3/9809c0cf24942c817c36af9abb9fb02956e17508fc36713d0bfc43848a4c/pyseq-0.9.3-py3-none-any.whl", hash = "sha256:6fbe21b976cff583fc90607dcdd9b03812d2387d950824389f96dd545b7dfbf9", size = 42308, upload-time = "2026-07-25T16:33:45.955Z" },
-]
-
-[[package]]
 name = "ruff"
 version = "0.16.3"
 source = { registry = "https://pypi.org/simple" }
@@ -113,7 +104,6 @@ version = "2.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },
-    { name = "pyseq" },
 ]
 
 [package.dev-dependencies]
@@ -123,10 +113,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "pillow", specifier = ">=12.3" },
-    { name = "pyseq", specifier = ">=0.9.3" },
-]
+requires-dist = [{ name = "pillow", specifier = ">=12.3" }]
 
 [package.metadata.requires-dev]
 dev = [

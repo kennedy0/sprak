@@ -7,17 +7,16 @@ import subprocess
 import warnings
 from functools import cache
 from pathlib import Path
-from tempfile import TemporaryDirectory
-
-from sprak.sprite import Sprite
+from tempfile import NamedTemporaryFile
 
 ASEPRITE_MAGIC_NUMBER = 0xA5E0
 
 
-def is_aseprite_file(file: Path) -> bool:
+def is_aseprite_file(file: str | Path) -> bool:
     """Check if a file is an Aseprite file.
     Bytes 4-5 should be the 0xA5E0 magic number: https://github.com/aseprite/aseprite/blob/main/docs/ase-file-specs.md#header
     """
+    file = Path(file)
     with file.open("rb") as fp:
         try:
             fp.seek(4)
@@ -30,51 +29,56 @@ def is_aseprite_file(file: Path) -> bool:
     return False
 
 
-def extract_sprites(file: Path, name: str) -> list[Sprite]:
-    """Extract sprites from an aseprite file."""
-    sprites = []
-
-    with TemporaryDirectory() as tmp:
-        tmp = Path(tmp)
-        tmp_json = tmp / f"{file.stem}.json"
-        tmp_sprite = tmp / f"{file.stem}.0001.png"
-
+def read_json_data(aseprite_file: str | Path) -> dict:
+    """Read the JSON data from an Aseprite file."""
+    aseprite_file = Path(aseprite_file)
+    with NamedTemporaryFile() as tmp:
         cmd = [get_aseprite_exe()]
         cmd += ["--batch"]
         cmd += ["--noinapp"]
         cmd += ["--list-tags"]
         cmd += ["--list-slices"]
-        cmd += ["--data", tmp_json.absolute().as_posix()]
         cmd += ["--format", "json-array"]
-        cmd += [file.absolute().as_posix()]
-        cmd += ["--save-as", tmp_sprite.as_posix()]
+        cmd += ["--data", tmp.name]
+        cmd += [aseprite_file.absolute().as_posix()]
         subprocess.run(cmd, check=True)
+        return json.load(tmp)
 
-        with tmp_json.open() as fp:
-            file_data = json.load(fp)
-            frames: list[dict] = file_data["frames"]
-            tags: list[dict] = file_data["meta"]["frameTags"]
-            # import pprint
-            # pprint.pprint(tags)
 
-        for frame_number, frame_data in enumerate(frames, start=1):
-            if len(frames) > 1:
-                sprite_name = f"{name}.{frame_number:04d}"
-            else:
-                sprite_name = f"{name}"
-            frame_path = tmp / f"{file.stem}.{frame_number:04d}.png"
-            sprite = Sprite.from_image(frame_path, sprite_name)
-            sprite.source_file = file.as_posix()
-            sprite.frame = frame_number
-            sprite.duration = frame_data["duration"]
-            sprites.append(sprite)
+def export_frames(aseprite_file: str | Path, sequence_path: str | Path) -> None:
+    """Export each frame in an Aseprite file as an image sequence.
+    Sequence path should be formatted as a printf-style formatted frame, e.g.:
+        path/to/frames.%04d.png
+    """
+    aseprite_file = Path(aseprite_file)
+    sequence_path = Path(sequence_path)
+    first_sequence_file = sequence_path.absolute().as_posix() % 1
 
-    return sprites
+    cmd = [get_aseprite_exe()]
+    cmd += ["--batch"]
+    cmd += ["--noinapp"]
+    cmd += [aseprite_file.absolute().as_posix()]
+    cmd += ["--save-as", first_sequence_file]
+    subprocess.run(cmd, check=True)
+
+
+def get_tag_frame_ranges(data: dict) -> list[tuple[str, range]]:
+    """Get a list of frame ranges for each tag.
+    Returns a tuple of (tag_name, frame_range).
+    Frame range is inclusive of the first and last frame.
+    """
+    return [(tag["name"], range(tag["from"] + 1, tag["to"] + 2)) for tag in data["meta"]["frameTags"]]
+
+
+def get_duplicate_tags(data: dict) -> set[str]:
+    """Show a warning if duplicate tags are found in the file."""
+    tags = [tag["name"] for tag in data["meta"]["frameTags"]]
+    return {tag for tag in tags if tags.count(tag) > 1}
 
 
 @cache
 def get_aseprite_exe() -> str:
-    """Get the path to the aseprite executable. Search is done in the following order:
+    """Get the path to the Aseprite executable. Search is done in the following order:
     1. If the SPRAK_ASEPRITE_EXE_PATH environment variable is set, that path is used.
     2. The 'aseprite' command/alias is used, if it exists.
     3. Known install paths (first vanilla, then Steam) are searched.
