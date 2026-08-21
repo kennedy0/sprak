@@ -32,3 +32,11 @@ class Rect(NamedTuple):
     @property
     def is_empty(self) -> bool:
         return self.area == 0
+
+    def to_json(self) -> dict:
+        return {
+            "x": self.x,
+            "y": self.y,
+            "w": self.w,
+            "h": self.h,
+        }

@@ -2,7 +2,6 @@ import io
 import json
 import math
 import zipfile
-from collections import defaultdict
 from pathlib import Path
 
 from PIL import Image, UnidentifiedImageError
@@ -11,33 +10,37 @@ from sprak import aseprite
 from sprak.frame import Frame
 from sprak.log import logger
 from sprak.rect import Rect
+from sprak.sprite import Sprite
 
 
 class Atlas:
     def __init__(self) -> None:
-        self._frames: list[Frame] = []
-        self._frame_names: set[str] = set()
+        self.sprites: dict[str, Sprite] = {}
+        self.frames: dict[str, Frame] = {}
         self._is_packed = False
         self._image = Image.new("RGBA", (0, 0))
         self._current_folder: Path | None = None
 
-    def add_frame(self, frame: Frame) -> None:
-        if frame.name in self._frame_names:
-            logger.error(f"a frame named {frame.name} is already in the atlas")
+    def add_sprite(self, sprite: Sprite) -> None:
+        if sprite.name in self.sprites:
+            logger.error(f"a sprite named {sprite.name} is already in the atlas")
             return
 
-        logger.debug(f"adding frame {frame.name}")
+        logger.debug(f"adding sprite {sprite.name}")
         self._is_packed = False
-        self._frames.append(frame)
-        self._frame_names.add(frame.name)
+        self.sprites[sprite.name] = sprite
+        for frame in sprite.frames:
+            if frame.name in self.frames:
+                logger.error(f"a frame named {frame.name} is already in the atlas")
+                continue
+            self.frames[frame.name] = frame
 
     def add_file(self, file: Path) -> None:
-        name = self._get_frame_name(file)
+        name = self._get_sprite_name(file)
         if aseprite.is_aseprite_file(file):
-            for frame in Frame.from_aseprite(name, file):
-                self.add_frame(frame)
-        elif self._is_image_file(file):
-            self.add_frame(Frame.from_image(name, file))
+            self.add_sprite(Sprite.from_aseprite(name, file))
+        elif is_image_file(file):
+            self.add_sprite(Sprite.from_image(name, file))
         else:
             logger.debug(f"skipping unsupported file {file.as_posix()}")
 
@@ -45,26 +48,48 @@ class Atlas:
         self._current_folder = folder
 
         for root, dirs, files in folder.walk():
-            for f in files:
-                file = root / f
-                self.add_file(file)
+            for seq in group_sequences(root, files):
+                if len(seq) == 1:
+                    self.add_file(seq[0])
+                else:
+                    name = self._get_sprite_name(seq[0])
+                    self.add_sprite(Sprite.from_images(name, seq))
 
         self._current_folder = None
+
+    def to_json(self) -> dict:
+        return {
+            "frames": self.frames,
+            "sprites": self.sprites,
+        }
+
+    def to_json_str(self) -> str:
+        def _custom_serializer(o: object) -> object:
+            if isinstance(o, Atlas | Sprite | Frame | Rect):
+                return o.to_json()
+            else:
+                raise TypeError(f"Object of type {o.__class__.__name__} Atlas is not JSON serializable")
+
+        return json.dumps(self, indent=2, sort_keys=True, default=_custom_serializer)
 
     def write_zip(self, file: str | Path) -> None:
         if not self._is_packed:
             self._pack()
 
+        image_buffer = io.BytesIO()
+        self._image.save(image_buffer, format="PNG")
+        image_bytes = image_buffer.getvalue()
+
         with zipfile.ZipFile(file, mode="w", compression=zipfile.ZIP_STORED) as zf:
-            zf.writestr("json", self._get_json_str())
-            zf.writestr("png", self._get_image_bytes())
+            zf.writestr("json", self.to_json_str())
+            zf.writestr("png", image_bytes)
 
     def write_json(self, file: str | Path) -> None:
         if not self._is_packed:
             self._pack()
 
         with open(file, "w") as fp:
-            fp.write(self._get_json_str())
+            fp.write(self.to_json_str())
 
     def write_image(self, file: str | Path) -> None:
         if not self._is_packed:
@@ -72,27 +97,8 @@ class Atlas:
 
         self._image.save(file)
 
-    def to_dict(self) -> dict:
-        return {
-            "frames": self._get_frames_dict(),
-            "sprites": self._get_sprites_dict(),
-        }
-
-    def _is_image_file(self, file: Path) -> bool:
-        """Check if the file can be opened by PIL."""
-        try:
-            with Image.open(file) as im:
-                im.verify()
-            return True
-        except UnidentifiedImageError:
-            pass
-        except Exception as e:  # noqa: BLE001
-            logger.error(e)
-
-        return False
-
-    def _get_frame_name(self, file: Path) -> str:
-        """Get a frame name by using its file name relative to the source folder that it was added from."""
+    def _get_sprite_name(self, file: Path) -> str:
+        """Get a sprite name by using its file name relative to the source folder that it was added from."""
         if self._current_folder:
             file = file.relative_to(self._current_folder)
 
@@ -100,13 +106,14 @@ class Atlas:
 
     def _pack(self) -> None:
         size = self._calculate_starting_size()
-        self._frames.sort(key=lambda f: f.height, reverse=True)
+        frames = list(self.frames.values())
+        frames.sort(key=lambda f: f.area, reverse=True)
 
         # Place frames
         while True:
             regions = [Rect(0, 0, size, size)]
             overflow = False
-            for frame in self._frames:
+            for frame in frames:
                 # Skip completely transparent images
                 if frame.is_empty:
                     continue
@@ -123,7 +130,6 @@ class Atlas:
                     split_y = frame.y + frame.height
                     regions += self._split_region(region, split_x, split_y)
                     regions.sort(key=lambda rect: rect.area)
-
                 else:
                     overflow = True
                     break
@@ -136,8 +142,8 @@ class Atlas:
 
         # Create image
         self._image = Image.new("RGBA", (size, size))
-        for frame in self._frames:
-            if frame.image:
+        for frame in frames:
+            if not frame.is_empty:
                 self._image.paste(frame.image, box=(frame.x, frame.y))
 
         self._is_packed = True
@@ -147,7 +153,7 @@ class Atlas:
         We assume the algorithm will be 100% efficient, meaning that the area of the atlas will be exactly the sum of the areas of the frames.
         Of course it won't, but rounding to the next power of 2 gives us some padding, which is a reasonable place to start.
         """
-        area = math.sqrt(sum([f.area for f in self._frames]))
+        area = math.sqrt(sum([f.area for f in self.frames.values()]))
         return round_pow2(area)
 
     def _find_region(self, frame: Frame, regions: list[Rect]) -> Rect | None:
@@ -162,7 +168,7 @@ class Atlas:
         """Horizontally split a region into top and bottom sub-regions.
                X
         ┌──────┬────────┐
-        │░░░░░░│  top   │
+        │░frame░│  top   │
         │░░░░░░│        │
         ├──────┴────────┤ Y
         │    bottom     │
@@ -187,40 +193,6 @@ class Atlas:
 
         return sub_regions
 
-    def _get_frames_dict(self) -> dict:
-        return {f.name: f.to_dict() for f in self._frames}
-
-    def _get_sprites_dict(self) -> dict:
-        def _default_factory() -> dict:
-            return {
-                "frames": [],
-                "animations": defaultdict(list),
-            }
-
-        sprites = defaultdict(_default_factory)
-
-        for frame in self._frames:
-            if sprite_name := frame.sprite:
-                sprites[sprite_name]["frames"].append(frame.name)
-                for animation in frame.animations:
-                    sprites[sprite_name]["animations"][animation].append(frame.name)
-
-        for sprite in sprites.values():
-            sprite["frames"].sort()
-            for animation in sprite["animations"].values():
-                animation.sort()
-
-        return sprites
-
-    def _get_json_str(self) -> str:
-        return json.dumps(self.to_dict(), indent=2, sort_keys=True)
-
-    def _get_image_bytes(self) -> bytes:
-        image_buffer = io.BytesIO()
-        self._image.save(image_buffer, format="PNG")
-        image_bytes = image_buffer.getvalue()
-        return image_bytes
-
 
 def round_pow2(value: float) -> int:
     """Round a value up to its closest power of 2."""
@@ -238,3 +210,24 @@ def next_pow2(value: float) -> int:
         result *= 2
 
     return result
+
+
+def is_image_file(file: Path) -> bool:
+    """Check if the file can be opened by PIL."""
+    try:
+        with Image.open(file) as im:
+            im.verify()
+        return True
+    except UnidentifiedImageError:
+        pass
+    except Exception as e:  # noqa: BLE001
+        logger.error(e)
+
+    return False
+
+
+def group_sequences(root: Path, files: list[str]) -> list[list[Path]]:
+    sequences = []
+    sequences = [[root / f] for f in files]
+    print("ToDo: group sequences")
+    return sequences
