@@ -9,6 +9,8 @@ from functools import cache
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
+from sprak.rect import Rect
+
 ASEPRITE_MAGIC_NUMBER = 0xA5E0
 
 
@@ -60,20 +62,6 @@ def export_frames(aseprite_file: str | Path, sequence_path: str | Path) -> None:
     cmd += [aseprite_file.absolute().as_posix()]
     cmd += ["--save-as", first_sequence_file]
     subprocess.run(cmd, check=True)
-
-
-def get_tag_frame_ranges(data: dict) -> list[tuple[str, range]]:
-    """Get a list of frame ranges for each tag.
-    Returns a tuple of (tag_name, frame_range).
-    Frame range is inclusive of the first and last frame.
-    """
-    return [(tag["name"], range(tag["from"] + 1, tag["to"] + 2)) for tag in data["meta"]["frameTags"]]
-
-
-def get_duplicate_tags(data: dict) -> set[str]:
-    """Show a warning if duplicate tags are found in the file."""
-    tags = [tag["name"] for tag in data["meta"]["frameTags"]]
-    return {tag for tag in tags if tags.count(tag) > 1}
 
 
 @cache
