@@ -1,7 +1,9 @@
 import io
 import json
 import math
+import re
 import zipfile
+from collections import defaultdict
 from pathlib import Path
 
 from PIL import Image, UnidentifiedImageError
@@ -9,8 +11,12 @@ from PIL import Image, UnidentifiedImageError
 from sprak import aseprite
 from sprak.frame import Frame
 from sprak.log import logger
+from sprak.parse import parse_filename
 from sprak.rect import Rect
 from sprak.sprite import Sprite
+
+SPRITE_ANIM_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<animation>\w+)\.(?P<frame>\d+)$", re.IGNORECASE)
+SPRITE_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<frame>\d+)$", re.IGNORECASE)
 
 
 class Atlas:
@@ -48,12 +54,12 @@ class Atlas:
         self._current_folder = folder
 
         for root, dirs, files in folder.walk():
-            for seq in group_sequences(root, files):
+            for seq in group_sequences(root, [(root / f) for f in files]):
                 if len(seq) == 1:
                     self.add_file(seq[0])
                 else:
-                    name = self._get_sprite_name(seq[0])
-                    self.add_sprite(Sprite.from_images(name, seq))
+                    name_prefix = root.relative_to(folder).as_posix()
+                    self.add_sprite(Sprite.from_sequence(name_prefix, seq))
 
         self._current_folder = None
 
@@ -226,8 +232,15 @@ def is_image_file(file: Path) -> bool:
     return False
 
 
-def group_sequences(root: Path, files: list[str]) -> list[list[Path]]:
-    sequences = []
-    sequences = [[root / f] for f in files]
-    print("ToDo: group sequences")
-    return sequences
+def group_sequences(root: Path, files: list[Path]) -> list[list[Path]]:
+    """Group files into sequences."""
+    sequences: dict[str, list[Path]] = defaultdict(list)
+
+    for file in files:
+        if aseprite.is_aseprite_file(file):
+            sequences[file.name].append(file)
+        else:
+            seq_name = parse_filename(file).sprite_name
+            sequences[seq_name].append(file)
+
+    return list(sequences.values())

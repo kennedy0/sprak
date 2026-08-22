@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from sprak import aseprite
 from sprak.frame import Frame
 from sprak.log import logger
+from sprak.parse import parse_filename
 from sprak.rect import Rect
 
 
@@ -39,18 +41,25 @@ class Sprite:
         return sprite
 
     @classmethod
-    def from_images(cls, name: str, files: list[Path]) -> Sprite:
-        sprite = cls(name)
-        # Parse the file name to look for sprite / animation / frame
-        # SPRITE_ANIM_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<animation>\w+)\.(?P<frame>\d+)$", re.IGNORECASE)
-        # SPRITE_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<frame>\d+)$", re.IGNORECASE)
-        # if match := SPRITE_ANIM_FRAME_RE.match(name):
-        #     frame.sprite = match.group("sprite")
-        #     frame.animations.append(match.group("animation"))
-        #     frame.frame_number = int(match.group("frame"))
-        # elif match := SPRITE_FRAME_RE.match(name):
-        #     frame.sprite = match.group("sprite")
-        #     frame.frame_number = int(match.group("frame"))
+    def from_sequence(cls, name_prefix: str, files: list[Path]) -> Sprite:
+        sprite_name_suffix = parse_filename(files[0]).sprite_name
+        sprite_name = f"{name_prefix}/{sprite_name_suffix}"
+        sprite = cls(sprite_name)
+
+        animations: dict[str, list[Frame]] = defaultdict(list)
+
+        for file in sorted(files):
+            frame_name = f"{name_prefix}/{file.stem}"
+            frame = Frame(frame_name, file)
+            _, animation_name, frame_number = parse_filename(file)
+            if animation_name:
+                animations[animation_name].append(frame)
+            if frame_number is not None:
+                frame.frame_number = frame_number
+            sprite.frames.append(frame)
+
+        if animations:
+            sprite.animations = animations
 
         return sprite
 
