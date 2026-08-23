@@ -42,10 +42,6 @@ class Frame:
         self.duration: int = 0
         self.image: Image.Image = image
 
-        self._debug_placement_order = -1
-        self._debug_region_used: Rect | None = None
-        self._debug_regions_split: list[Rect] = []
-
     @property
     def area(self) -> int:
         return self.width * self.height

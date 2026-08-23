@@ -48,3 +48,26 @@ class Rect(NamedTuple):
             "w": self.w,
             "h": self.h,
         }
+
+    @staticmethod
+    def merge(a: Rect, b: Rect) -> Rect | None:
+        """Attempt to merge 2 Rects together.
+        A single Rect will be returned if it can be represented by a single larger Rect.
+        Otherwise, None will be returned.
+        """
+        if a.y == b.y and a.h == b.h:
+            if a.right == b.left - 1:
+                # [ a ][ b ]
+                return Rect(a.x, a.y, a.w + b.w, a.h)
+            elif a.left == b.right + 1:
+                # [ b ][ a ]
+                return Rect(b.x, b.y, b.w + a.w, b.h)
+        elif a.x == b.x and a.w == b.w:
+            if a.bottom == b.top - 1:
+                # [ a ]
+                # [ b ]
+                return Rect(a.x, a.y, a.w, a.h + b.h)
+            elif a.top == b.bottom + 1:
+                # [ b ]
+                # [ a ]
+                return Rect(b.x, b.y, b.w, b.h + a.h)

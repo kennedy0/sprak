@@ -26,6 +26,7 @@ class Atlas:
         self._is_packed = False
         self._image = Image.new("RGBA", (0, 0))
         self._current_folder: Path | None = None
+        self._history: list[tuple[Frame, list[Rect]]] = []  # (frame_added, current_regions)
 
     def add_sprite(self, sprite: Sprite) -> None:
         if sprite.name in self.sprites:
@@ -54,7 +55,7 @@ class Atlas:
         self._current_folder = folder
 
         for root, dirs, files in folder.walk():
-            for seq in group_sequences(root, [(root / f) for f in files]):
+            for seq in group_sequences([(root / f) for f in files]):
                 if len(seq) == 1:
                     self.add_file(seq[0])
                 else:
@@ -110,19 +111,11 @@ class Atlas:
         sequence = Path(sequence)
         sequence.parent.mkdir(exist_ok=True, parents=True)
 
-        frames = list(self.frames.values())
-        frames.sort(key=lambda f: f._debug_placement_order)
-
         atlas_image = Image.new(self._image.mode, self._image.size)
-        frame_number = 1
 
-        for frame in frames:
-            if frame.is_empty:
-                continue
-
+        for i, (frame, _) in enumerate(self._history, start=1):
             atlas_image.paste(frame.image, box=(frame.x, frame.y))
-            atlas_image.save(sequence.absolute().as_posix() % frame_number)
-            frame_number += 1
+            atlas_image.save(sequence.absolute().as_posix() % i)
 
     def write_debug_animation(self, sequence: str | Path) -> None:
         if not self._is_packed:
@@ -131,40 +124,31 @@ class Atlas:
         sequence = Path(sequence)
         sequence.parent.mkdir(exist_ok=True, parents=True)
 
-        frames = list(self.frames.values())
-        frames.sort(key=lambda f: f._debug_placement_order)
-
         atlas_image = Image.new(self._image.mode, self._image.size)
-        frame_number = 1
-
-        regions = [Rect(0, 0, *self._image.size)]
         color_red = (255, 0, 0)
+        color_green = (0, 255, 0)
+        color_dark_green = (0, 128, 0)
+        color_black = (0, 0, 0)
 
-        for frame in frames:
-            # Start with a copy of the atlas image
+        previous_regions: set[Rect] = set()
+
+        for i, (frame, regions) in enumerate(self._history, start=1):
+            atlas_image.paste(frame.image, box=(frame.x, frame.y))
             image = atlas_image.copy()
             draw = ImageDraw.Draw(image)
 
-            # Draw all regions
+            new_regions = set(regions) - previous_regions
             for rect in regions:
-                draw.rectangle(rect.pil_rect, fill=None, outline=color_red)
+                if rect in new_regions:
+                    line_color = color_green
+                    fill_color = color_dark_green
+                else:
+                    line_color = color_red
+                    fill_color = color_black
+                draw.rectangle(rect.pil_rect, fill=fill_color, outline=line_color)
+            previous_regions = set(regions)
 
-            # Save
-            image.save(sequence.absolute().as_posix() % frame_number)
-            frame_number += 1
-
-            if not frame.is_empty:
-                # Update regions
-                if region_used := frame._debug_region_used:
-                    regions.remove(region_used)
-                    regions += frame._debug_regions_split
-                    regions.sort(key=lambda rect: rect.area)
-
-                # Place the new frame in the atlas image
-                atlas_image.paste(frame.image, box=(frame.x, frame.y))
-
-        # Save the final frame of the atlas image
-        atlas_image.save(sequence.absolute().as_posix() % frame_number)
+            image.save(sequence.absolute().as_posix() % i)
 
     def _get_sprite_name(self, file: Path) -> str:
         """Get a sprite name by using its file name relative to the source folder that it was added from."""
@@ -181,11 +165,10 @@ class Atlas:
         # Place frames
         while True:
             logger.debug(f"packing frames on atlas size {size}x{size}")
+            self._history.clear()
             regions = [Rect(0, 0, size, size)]
             overflow = False
-            for i, frame in enumerate(frames):
-                frame._debug_placement_order = i
-
+            for frame in frames:
                 # Skip completely transparent images
                 if frame.is_empty:
                     continue
@@ -196,15 +179,14 @@ class Atlas:
                     frame.x = region.x
                     frame.y = region.y
 
-                    # Split region
+                    # Split region and merge the results
                     regions.remove(region)
                     split_x = frame.x + frame.width
                     split_y = frame.y + frame.height
                     new_regions = self._split_region(region, split_x, split_y)
-                    regions += new_regions
+                    self._merge_regions(regions, new_regions)
                     regions.sort(key=lambda rect: rect.area)
-                    frame._debug_region_used = region
-                    frame._debug_regions_split = new_regions
+                    self._history.append((frame, regions.copy()))
                 else:
                     overflow = True
                     logger.debug("packing overflowed")
@@ -257,7 +239,7 @@ class Atlas:
         The aspect ratios of the resulting regions are compared against each other.
         The cutting direction that produces the "most square-ish" results (i.e. the least-extreme aspect ratio) wins.
         """
-        left_w = x - region.left + 1
+        left_w = x - region.left
         right_w = region.right - x + 1
 
         top_h = y - region.top
@@ -295,6 +277,21 @@ class Atlas:
         else:
             return horizontal
 
+    def _merge_regions(self, regions: list[Rect], new_regions: list[Rect]) -> None:
+        """Add new regions from a split to the list of existing regions.
+        The new regions will make attempts to merge with the old regions.
+        """
+        merged_regions = []
+        for new in new_regions[:]:
+            for old in regions[:]:
+                if rect := Rect.merge(new, old):
+                    new_regions.remove(new)
+                    regions.remove(old)
+                    merged_regions.append(rect)
+
+        regions += new_regions
+        regions += merged_regions
+
 
 def round_pow2(value: float) -> int:
     """Round a value up to its closest power of 2."""
@@ -328,7 +325,7 @@ def is_image_file(file: Path) -> bool:
     return False
 
 
-def group_sequences(root: Path, files: list[Path]) -> list[list[Path]]:
+def group_sequences(files: list[Path]) -> list[list[Path]]:
     """Group files into sequences."""
     sequences: dict[str, list[Path]] = defaultdict(list)
 
