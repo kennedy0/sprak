@@ -4,6 +4,8 @@ from pathlib import Path
 
 from PIL import Image
 
+from sprak.rect import Rect
+
 
 class Frame:
     def __init__(self, name: str, file: str | Path) -> None:
@@ -11,8 +13,6 @@ class Frame:
         self.file = Path(file)
 
         with Image.open(file) as image:
-            width = image.width
-            height = image.height
             source_width = image.width
             source_height = image.height
 
@@ -24,6 +24,8 @@ class Frame:
                 offset_y = upper
                 image = image.crop(bbox)
             else:
+                width = 0
+                height = 0
                 offset_x = 0
                 offset_y = 0
                 image = image.copy()
@@ -39,6 +41,10 @@ class Frame:
         self.frame_number: int = 0
         self.duration: int = 0
         self.image: Image.Image = image
+
+        self._debug_placement_order = -1
+        self._debug_region_used: Rect | None = None
+        self._debug_regions_split: list[Rect] = []
 
     @property
     def area(self) -> int:

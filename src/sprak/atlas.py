@@ -6,7 +6,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageDraw, UnidentifiedImageError
 
 from sprak import aseprite
 from sprak.frame import Frame
@@ -103,6 +103,69 @@ class Atlas:
 
         self._image.save(file)
 
+    def write_animation(self, sequence: str | Path) -> None:
+        if not self._is_packed:
+            self._pack()
+
+        sequence = Path(sequence)
+        sequence.parent.mkdir(exist_ok=True, parents=True)
+
+        frames = list(self.frames.values())
+        frames.sort(key=lambda f: f._debug_placement_order)
+
+        atlas_image = Image.new(self._image.mode, self._image.size)
+        frame_number = 1
+
+        for frame in frames:
+            if frame.is_empty:
+                continue
+
+            atlas_image.paste(frame.image, box=(frame.x, frame.y))
+            atlas_image.save(sequence.absolute().as_posix() % frame_number)
+            frame_number += 1
+
+    def write_debug_animation(self, sequence: str | Path) -> None:
+        if not self._is_packed:
+            self._pack()
+
+        sequence = Path(sequence)
+        sequence.parent.mkdir(exist_ok=True, parents=True)
+
+        frames = list(self.frames.values())
+        frames.sort(key=lambda f: f._debug_placement_order)
+
+        atlas_image = Image.new(self._image.mode, self._image.size)
+        frame_number = 1
+
+        regions = [Rect(0, 0, *self._image.size)]
+        color_red = (255, 0, 0)
+
+        for frame in frames:
+            # Start with a copy of the atlas image
+            image = atlas_image.copy()
+            draw = ImageDraw.Draw(image)
+
+            # Draw all regions
+            for rect in regions:
+                draw.rectangle(rect.pil_rect, fill=None, outline=color_red)
+
+            # Save
+            image.save(sequence.absolute().as_posix() % frame_number)
+            frame_number += 1
+
+            if not frame.is_empty:
+                # Update regions
+                if region_used := frame._debug_region_used:
+                    regions.remove(region_used)
+                    regions += frame._debug_regions_split
+                    regions.sort(key=lambda rect: rect.area)
+
+                # Place the new frame in the atlas image
+                atlas_image.paste(frame.image, box=(frame.x, frame.y))
+
+        # Save the final frame of the atlas image
+        atlas_image.save(sequence.absolute().as_posix() % frame_number)
+
     def _get_sprite_name(self, file: Path) -> str:
         """Get a sprite name by using its file name relative to the source folder that it was added from."""
         if self._current_folder:
@@ -117,9 +180,12 @@ class Atlas:
 
         # Place frames
         while True:
+            logger.debug(f"packing frames on atlas size {size}x{size}")
             regions = [Rect(0, 0, size, size)]
             overflow = False
-            for frame in frames:
+            for i, frame in enumerate(frames):
+                frame._debug_placement_order = i
+
                 # Skip completely transparent images
                 if frame.is_empty:
                     continue
@@ -134,10 +200,14 @@ class Atlas:
                     regions.remove(region)
                     split_x = frame.x + frame.width
                     split_y = frame.y + frame.height
-                    regions += self._split_region(region, split_x, split_y)
+                    new_regions = self._split_region(region, split_x, split_y)
+                    regions += new_regions
                     regions.sort(key=lambda rect: rect.area)
+                    frame._debug_region_used = region
+                    frame._debug_regions_split = new_regions
                 else:
                     overflow = True
+                    logger.debug("packing overflowed")
                     break
 
             # If the frames overflowed on the atlas, try again with increased atlas size
@@ -171,33 +241,59 @@ class Atlas:
         return None
 
     def _split_region(self, region: Rect, x: int, y: int) -> list[Rect]:
-        """Horizontally split a region into top and bottom sub-regions.
-               X
-        ┌──────┬────────┐
-        │░frame░│  top   │
-        │░░░░░░│        │
-        ├──────┴────────┤ Y
-        │    bottom     │
-        │               │
-        └───────────────┘
+        """Split a region using guillotine cutting.
+        Both horizontal and vertical cutting are attempted.
+
+        Horizontal:            Vertical:
+               X                      X
+        ┌──────┬────────┐      ┌──────┬────────┐
+        │░░░░░░│  top   │      │░░░░░░│ right  │
+        │░░░░░░│        │      │░░░░░░│        │
+        ├──────┴────────┤ Y    ├──────┤        │ Y
+        │    bottom     │      │ left │        │
+        │               │      │      │        │
+        └───────────────┘      └──────┴────────┘
+
+        The aspect ratios of the resulting regions are compared against each other.
+        The cutting direction that produces the "most square-ish" results (i.e. the least-extreme aspect ratio) wins.
         """
-        sub_regions = []
+        left_w = x - region.left + 1
+        right_w = region.right - x + 1
 
-        top_w = region.right - x + 1
         top_h = y - region.top
-        top = Rect(x, region.y, top_w, top_h)
-
-        bottom_w = region.w
         bottom_h = region.bottom - y + 1
-        bottom = Rect(region.x, y, bottom_w, bottom_h)
 
-        # Add non-empty regions back to region list
+        top = Rect(x, region.y, right_w, top_h)
+        bottom = Rect(region.x, y, region.w, bottom_h)
+        left = Rect(region.x, y, left_w, bottom_h)
+        right = Rect(x, region.y, right_w, region.h)
+
+        horizontal = []
         if not top.is_empty:
-            sub_regions.append(top)
+            horizontal.append(top)
         if not bottom.is_empty:
-            sub_regions.append(bottom)
+            horizontal.append(bottom)
 
-        return sub_regions
+        vertical = []
+        if not left.is_empty:
+            vertical.append(left)
+        if not right.is_empty:
+            vertical.append(right)
+
+        if not horizontal and not vertical:
+            return []
+        elif not horizontal:
+            return vertical
+        elif not vertical:
+            return horizontal
+
+        least_squarish_horizontal = min([rect.squareness for rect in horizontal])
+        least_squarish_vertical = min([rect.squareness for rect in vertical])
+
+        if least_squarish_horizontal < least_squarish_vertical:
+            return vertical
+        else:
+            return horizontal
 
 
 def round_pow2(value: float) -> int:

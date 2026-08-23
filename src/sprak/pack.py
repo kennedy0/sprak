@@ -10,6 +10,8 @@ def pack(
     dst_zip: str | Path | None = None,
     dst_json: str | Path | None = None,
     dst_image: str | Path | None = None,
+    dst_animation: str | Path | None = None,
+    dst_debug_animation: str | Path | None = None,
 ) -> None:
     atlas = Atlas()
 
@@ -35,3 +37,9 @@ def pack(
     if dst_image:
         logger.info(f"writing {Path(dst_image).absolute().as_posix()}")
         atlas.write_image(dst_image)
+    if dst_animation:
+        logger.info(f"writing {Path(dst_animation).absolute().as_posix()}")
+        atlas.write_animation(dst_animation)
+    if dst_debug_animation:
+        logger.info(f"writing {Path(dst_debug_animation).absolute().as_posix()}")
+        atlas.write_debug_animation(dst_debug_animation)

@@ -90,18 +90,23 @@ class Sprite:
             if bounds and center:
                 bounds = Rect(**bounds)
                 center = Rect(**center)
+
                 left_x = bounds.x
                 center_x = bounds.x + center.x
                 right_x = bounds.x + center.x + center.w
+
                 top_y = bounds.y
                 center_y = bounds.y + center.y
                 bottom_y = bounds.y + center.y + center.h
+
                 left_width = center_x - left_x
                 center_width = center.w
                 right_width = bounds.w - left_width - center_width
+
                 top_height = center_y - top_y
                 center_height = center.h
                 bottom_height = bounds.h - top_height - center_height
+
                 sprite.nine_slice = [
                     Rect(left_x, top_y, left_width, top_height),  # top-left
                     Rect(center_x, top_y, center_width, top_height),  # top-center
