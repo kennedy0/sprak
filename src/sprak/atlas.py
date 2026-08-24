@@ -6,7 +6,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
-from PIL import Image, ImageDraw, UnidentifiedImageError
+from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
 
 from sprak import aseprite
 from sprak.frame import Frame
@@ -17,6 +17,9 @@ from sprak.sprite import Sprite
 
 SPRITE_ANIM_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<animation>\w+)\.(?P<frame>\d+)$", re.IGNORECASE)
 SPRITE_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<frame>\d+)$", re.IGNORECASE)
+
+FONT_M5X7 = Path(__file__) / "fonts" / "m5x7.ttf"
+FONT_SIZE = 16
 
 
 class Atlas:
@@ -98,57 +101,69 @@ class Atlas:
         with open(file, "w") as fp:
             fp.write(self.to_json_str())
 
-    def write_image(self, file: str | Path) -> None:
+    def write_png(self, file: str | Path) -> None:
         if not self._is_packed:
             self._pack()
 
-        self._image.save(file)
+        self._image.save(file, format="PNG")
 
-    def write_animation(self, sequence: str | Path) -> None:
+    def write_gif(self, file: str | Path, fps: float = 10) -> None:
+        if fps <= 0:
+            logger.error("fps must be greater than 0")
+            return
+
         if not self._is_packed:
             self._pack()
-
-        sequence = Path(sequence)
-        sequence.parent.mkdir(exist_ok=True, parents=True)
 
         atlas_image = Image.new(self._image.mode, self._image.size)
+        images: list[Image.Image] = []
 
-        for i, (frame, _) in enumerate(self._history, start=1):
+        for frame, _ in self._history:
             atlas_image.paste(frame.image, box=(frame.x, frame.y))
-            atlas_image.save(sequence.absolute().as_posix() % i)
+            images.append(atlas_image.copy())
 
-    def write_debug_animation(self, sequence: str | Path) -> None:
+        images[0].save(file, format="GIF", save_all=True, append_images=images[1:], duration=1000 / fps)
+
+    def write_debug_gif(self, file: str | Path, fps: float = 10) -> None:
+        if fps <= 0:
+            logger.error("fps must be greater than 0")
+            return
+
         if not self._is_packed:
             self._pack()
 
-        sequence = Path(sequence)
-        sequence.parent.mkdir(exist_ok=True, parents=True)
+        font = ImageFont.truetype(FONT_M5X7, FONT_SIZE)
 
-        atlas_image = Image.new(self._image.mode, self._image.size)
+        text_width = int(max([font.getlength(frame.name) for (frame, _) in self._history]))
+        text_height = FONT_SIZE
+
+        image_width = max(self._image.width, text_width)
+        image_height = self._image.height + text_height
+
+        text_bg_rect = (0, self._image.height, image_width, image_height)
+        text_position = (0, self._image.height)
+
         color_red = (255, 0, 0)
-        color_green = (0, 255, 0)
-        color_dark_green = (0, 128, 0)
         color_black = (0, 0, 0)
+        color_white = (200, 200, 200)
 
-        previous_regions: set[Rect] = set()
+        atlas_image = Image.new(self._image.mode, (image_width, image_height))
+        images: list[Image.Image] = []
 
-        for i, (frame, regions) in enumerate(self._history, start=1):
+        for frame, regions in self._history:
             atlas_image.paste(frame.image, box=(frame.x, frame.y))
             image = atlas_image.copy()
+
             draw = ImageDraw.Draw(image)
-
-            new_regions = set(regions) - previous_regions
             for rect in regions:
-                if rect in new_regions:
-                    line_color = color_green
-                    fill_color = color_dark_green
-                else:
-                    line_color = color_red
-                    fill_color = color_black
-                draw.rectangle(rect.pil_rect, fill=fill_color, outline=line_color)
-            previous_regions = set(regions)
+                draw.rectangle(rect.pil_rect, fill=color_black, outline=color_red)
 
-            image.save(sequence.absolute().as_posix() % i)
+            draw.rectangle(text_bg_rect, fill=color_black)
+            draw.text(text_position, frame.name, font=font, fill=color_white)
+
+            images.append(image)
+
+        images[0].save(file, save_all=True, append_images=images[1:], duration=1000 / fps)
 
     def _get_sprite_name(self, file: Path) -> str:
         """Get a sprite name by using its file name relative to the source folder that it was added from."""
@@ -288,6 +303,7 @@ class Atlas:
                     new_regions.remove(new)
                     regions.remove(old)
                     merged_regions.append(rect)
+                    break
 
         regions += new_regions
         regions += merged_regions

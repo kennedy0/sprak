@@ -9,9 +9,10 @@ def pack(
     *,
     dst_zip: str | Path | None = None,
     dst_json: str | Path | None = None,
-    dst_image: str | Path | None = None,
-    dst_animation: str | Path | None = None,
-    dst_debug_animation: str | Path | None = None,
+    dst_png: str | Path | None = None,
+    dst_gif: str | Path | None = None,
+    dst_debug_gif: str | Path | None = None,
+    fps: float = 24,
 ) -> None:
     atlas = Atlas()
 
@@ -34,12 +35,12 @@ def pack(
     if dst_json:
         logger.info(f"writing {Path(dst_json).absolute().as_posix()}")
         atlas.write_json(dst_json)
-    if dst_image:
-        logger.info(f"writing {Path(dst_image).absolute().as_posix()}")
-        atlas.write_image(dst_image)
-    if dst_animation:
-        logger.info(f"writing {Path(dst_animation).absolute().as_posix()}")
-        atlas.write_animation(dst_animation)
-    if dst_debug_animation:
-        logger.info(f"writing {Path(dst_debug_animation).absolute().as_posix()}")
-        atlas.write_debug_animation(dst_debug_animation)
+    if dst_png:
+        logger.info(f"writing {Path(dst_png).absolute().as_posix()}")
+        atlas.write_png(dst_png)
+    if dst_gif:
+        logger.info(f"writing {Path(dst_gif).absolute().as_posix()}")
+        atlas.write_gif(dst_gif, fps)
+    if dst_debug_gif:
+        logger.info(f"writing {Path(dst_debug_gif).absolute().as_posix()}")
+        atlas.write_debug_gif(dst_debug_gif, fps)

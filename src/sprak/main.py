@@ -7,17 +7,17 @@ def main() -> int:
     src = "test/sprites"
     dst_zip = "test/atlas.zip"
     dst_json = "test/atlas.json"
-    dst_image = "test/atlas.png"
-    dst_animation = "test/animation/test.%04d.png"
-    dst_debug_animation = "test/debug_animation/test.%04d.png"
+    dst_png = "test/atlas.png"
+    dst_gif = "test/atlas.gif"
+    dst_debug_gif = "test/atlas_debug.gif"
 
     sprak.pack(
         src,
         dst_zip=dst_zip,
         dst_json=dst_json,
-        dst_image=dst_image,
-        dst_animation=dst_animation,
-        dst_debug_animation=dst_debug_animation,
+        dst_png=dst_png,
+        dst_gif=dst_gif,
+        dst_debug_gif=dst_debug_gif,
     )
     return 0
 
