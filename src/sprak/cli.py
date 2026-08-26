@@ -27,7 +27,11 @@ def pack_sprites() -> None:
     group.add_argument("--json", metavar="FILE", help="write atlas to a JSON file")
     group.add_argument("--png", metavar="FILE", help="write atlas to a PNG file")
     group.add_argument("--gif", metavar="FILE", help="write packing animation to a GIF file")
-    group.add_argument("--debug-gif", metavar="FILE", help="write packing animation with debug info to a GIF file")
+    group.add_argument(
+        "--debug-gif",
+        metavar="FILE",
+        help="write packing animation with debug info to a GIF file",
+    )
 
     args = parser.parse_args(sys.argv[1:])
 
@@ -59,7 +63,3 @@ def _get_version_str() -> str:
     with pyproject_toml.open("rb") as fp:
         data = tomllib.load(fp)
         return data.get("project", {}).get("version", "")
-
-
-if __name__ == "__main__":
-    pack_sprites()

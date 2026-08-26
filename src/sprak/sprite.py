@@ -48,7 +48,10 @@ class Sprite:
         animations: dict[str, list[Frame]] = defaultdict(list)
 
         for file in sorted(files):
-            frame_name = f"{name_prefix}/{file.stem}"
+            if name_prefix:
+                frame_name = f"{name_prefix}/{file.stem}"
+            else:
+                frame_name = file.stem
             frame = Frame(frame_name, file)
             _, animation_name, frame_number = parse_filename(file)
             if animation_name:

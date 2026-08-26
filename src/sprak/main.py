@@ -19,6 +19,7 @@ def main() -> int:
         dst_gif=dst_gif,
         dst_debug_gif=dst_debug_gif,
     )
+
     return 0
 
 

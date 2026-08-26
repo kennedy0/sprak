@@ -6,7 +6,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
+from PIL import Image, ImageDraw, ImageFont, ImageText, UnidentifiedImageError
 
 from sprak import aseprite
 from sprak.frame import Frame
@@ -62,7 +62,10 @@ class Atlas:
                 if len(seq) == 1:
                     self.add_file(seq[0])
                 else:
-                    name_prefix = root.relative_to(folder).as_posix()
+                    if root.samefile(folder):
+                        name_prefix = ""
+                    else:
+                        name_prefix = root.relative_to(folder).as_posix()
                     self.add_sprite(Sprite.from_sequence(name_prefix, seq))
 
         self._current_folder = None
@@ -122,7 +125,7 @@ class Atlas:
             atlas_image.paste(frame.image, box=(frame.x, frame.y))
             images.append(atlas_image.copy())
 
-        images[0].save(file, format="GIF", save_all=True, append_images=images[1:], duration=1000 / fps)
+        images[0].save(file, format="GIF", save_all=True, disposal=2, append_images=images[1:], duration=1000 / fps)
 
     def write_debug_gif(self, file: str | Path, fps: float = 10) -> None:
         if fps <= 0:
@@ -134,14 +137,25 @@ class Atlas:
 
         font = ImageFont.truetype(FONT_M5X7, FONT_SIZE)
 
-        text_width = int(max([font.getlength(frame.name) for (frame, _) in self._history]))
-        text_height = FONT_SIZE
+        # Get max size of text
+        max_text_w = 0
+        max_text_h = 0
+        for frame_name, frame in self.frames.items():
+            frame_json = json.dumps(frame.to_json(), indent=2, sort_keys=True)
+            _, _, name_w, _ = ImageText.Text(frame_name, font).get_bbox()
+            _, _, json_w, json_h = ImageText.Text(frame_json, font).get_bbox()
+            text_w = math.ceil(max(name_w, json_w))
+            text_h = math.ceil(FONT_SIZE + json_h)
+            max_text_w = max(text_w, max_text_w)
+            max_text_h = max(text_h, max_text_h)
 
-        image_width = max(self._image.width, text_width)
-        image_height = self._image.height + text_height
+        text_spacing = 4
+        image_width = self._image.width + text_spacing + max_text_w
+        image_height = max(self._image.height, max_text_h)
 
-        text_bg_rect = (0, self._image.height, image_width, image_height)
-        text_position = (0, self._image.height)
+        text_rect = (self._image.width, 0, image_width, image_height)
+        name_text_position = (text_rect[0] + text_spacing, text_rect[1])
+        json_text_position = (text_rect[0] + text_spacing, text_rect[1] + FONT_SIZE)
 
         color_red = (255, 0, 0)
         color_black = (0, 0, 0)
@@ -158,12 +172,18 @@ class Atlas:
             for rect in regions:
                 draw.rectangle(rect.pil_rect, fill=color_black, outline=color_red)
 
-            draw.rectangle(text_bg_rect, fill=color_black)
-            draw.text(text_position, frame.name, font=font, fill=color_white)
+            draw.rectangle(text_rect, fill=color_black)
+            draw.text(name_text_position, frame.name, font=font, fill=color_white)
+            draw.text(
+                json_text_position,
+                json.dumps(frame.to_json(), indent=2, sort_keys=True),
+                font=font,
+                fill=color_white,
+            )
 
             images.append(image)
 
-        images[0].save(file, save_all=True, append_images=images[1:], duration=1000 / fps)
+        images[0].save(file, format="GIF", save_all=True, disposal=2, append_images=images[1:], duration=1000 / fps)
 
     def _get_sprite_name(self, file: Path) -> str:
         """Get a sprite name by using its file name relative to the source folder that it was added from."""
@@ -327,20 +347,6 @@ def next_pow2(value: float) -> int:
     return result
 
 
-def is_image_file(file: Path) -> bool:
-    """Check if the file can be opened by PIL."""
-    try:
-        with Image.open(file) as im:
-            im.verify()
-        return True
-    except UnidentifiedImageError:
-        pass
-    except Exception as e:  # noqa: BLE001
-        logger.error(e)
-
-    return False
-
-
 def group_sequences(files: list[Path]) -> list[list[Path]]:
     """Group files into sequences."""
     sequences: dict[str, list[Path]] = defaultdict(list)
@@ -353,3 +359,17 @@ def group_sequences(files: list[Path]) -> list[list[Path]]:
             sequences[seq_name].append(file)
 
     return list(sequences.values())
+
+
+def is_image_file(file: str | Path) -> bool:
+    """Check if the file can be opened by PIL."""
+    try:
+        with Image.open(file) as im:
+            im.verify()
+        return True
+    except UnidentifiedImageError:
+        pass
+    except Exception as e:  # noqa: BLE001
+        logger.error(e)
+
+    return False

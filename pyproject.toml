@@ -13,6 +13,7 @@ dependencies = [
 
 [project.scripts]
 sprak = "sprak.cli:pack_sprites"
+sprak-view = "sprak.cli:view_atlas"
 
 [project.urls]
 Homepage = "https://github.com/kennedy0/sprak"
