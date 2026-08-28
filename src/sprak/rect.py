@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import NamedTuple, TypedDict
+
+
+class RectJSON(TypedDict):
+    x: int
+    y: int
+    w: int
+    h: int
 
 
 class Rect(NamedTuple):
@@ -41,7 +48,7 @@ class Rect(NamedTuple):
     def pil_rect(self) -> tuple[int, int, int, int]:
         return (self.x, self.y, self.x + self.w - 1, self.y + self.h - 1)
 
-    def to_json(self) -> dict:
+    def to_json(self) -> RectJSON:
         return {
             "x": self.x,
             "y": self.y,

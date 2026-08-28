@@ -5,21 +5,27 @@ import re
 import zipfile
 from collections import defaultdict
 from pathlib import Path
+from typing import TypedDict
 
 from PIL import Image, ImageDraw, ImageFont, ImageText, UnidentifiedImageError
 
 from sprak import aseprite
-from sprak.frame import Frame
+from sprak.frame import Frame, FrameJSON
 from sprak.log import logger
 from sprak.parse import parse_filename
 from sprak.rect import Rect
-from sprak.sprite import Sprite
+from sprak.sprite import Sprite, SpriteJSON
 
 SPRITE_ANIM_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<animation>\w+)\.(?P<frame>\d+)$", re.IGNORECASE)
 SPRITE_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<frame>\d+)$", re.IGNORECASE)
 
 FONT_M5X7 = Path(__file__) / "fonts" / "m5x7.ttf"
 FONT_SIZE = 16
+
+
+class AtlasJSON(TypedDict):
+    frames: dict[str, FrameJSON]
+    sprites: dict[str, SpriteJSON]
 
 
 class Atlas:
@@ -63,27 +69,21 @@ class Atlas:
                     self.add_file(seq[0])
                 else:
                     if root.samefile(folder):
-                        name_prefix = ""
+                        rel_path = ""
                     else:
-                        name_prefix = root.relative_to(folder).as_posix()
-                    self.add_sprite(Sprite.from_sequence(name_prefix, seq))
+                        rel_path = root.relative_to(folder).as_posix()
+                    self.add_sprite(Sprite.from_sequence(rel_path, seq))
 
         self._current_folder = None
 
-    def to_json(self) -> dict:
+    def to_json(self) -> AtlasJSON:
         return {
-            "frames": self.frames,
-            "sprites": self.sprites,
+            "frames": {k: v.to_json() for k, v in self.frames.items()},
+            "sprites": {k: v.to_json() for k, v in self.sprites.items()},
         }
 
     def to_json_str(self) -> str:
-        def _custom_serializer(o: object) -> object:
-            if isinstance(o, Atlas | Sprite | Frame | Rect):
-                return o.to_json()
-            else:
-                raise TypeError(f"Object of type {o.__class__.__name__} Atlas is not JSON serializable")
-
-        return json.dumps(self, indent=2, sort_keys=True, default=_custom_serializer)
+        return json.dumps(self.to_json(), indent=2, sort_keys=True)
 
     def write_zip(self, file: str | Path) -> None:
         if not self._is_packed:

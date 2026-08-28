@@ -4,12 +4,9 @@ import platform
 import shutil
 import struct
 import subprocess
-import warnings
 from functools import cache
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-
-from sprak.rect import Rect
 
 ASEPRITE_MAGIC_NUMBER = 0xA5E0
 
@@ -70,7 +67,6 @@ def get_aseprite_exe() -> str:
     1. If the SPRAK_ASEPRITE_EXE_PATH environment variable is set, that path is used.
     2. The 'aseprite' command/alias is used, if it exists.
     3. Known install paths (first vanilla, then Steam) are searched.
-    4. If nothing was found, fall back to 'aseprite' which will probably fail.
     """
     if exe_from_env := os.getenv("SPRAK_ASEPRITE_EXE_PATH"):
         return exe_from_env
@@ -79,12 +75,9 @@ def get_aseprite_exe() -> str:
     elif exe_from_install_path := search_aseprite_install_paths():
         return exe_from_install_path
 
-    warnings.warn(
-        "An Aseprite installation could not be found. Make sure it is installed, and/or set the SPRAK_ASEPRITE_EXE_PATH.",
-        UserWarning,
+    raise RuntimeError(
+        "An Aseprite installation could not be found. Make sure it is installed, and/or set the SPRAK_ASEPRITE_EXE_PATH."
     )
-
-    return "aseprite"
 
 
 def search_aseprite_install_paths() -> str | None:

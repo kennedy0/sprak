@@ -3,12 +3,19 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import NotRequired, TypedDict
 
 from sprak import aseprite
 from sprak.frame import Frame
 from sprak.log import logger
 from sprak.parse import parse_filename
-from sprak.rect import Rect
+from sprak.rect import Rect, RectJSON
+
+
+class SpriteJSON(TypedDict):
+    frames: list[str]
+    animations: NotRequired[dict[str, list[str]]]
+    slice9: NotRequired[list[RectJSON]]
 
 
 class Sprite:
@@ -16,21 +23,23 @@ class Sprite:
         self.name = name
         self.frames: list[Frame] = []
         self.animations: dict[str, list[Frame]] = {}
-        self.nine_slice: list[Rect] = []
+        self.slice9: list[Rect] = []
 
     def add_frame(self, frame: Frame) -> None:
         self.frames.append(frame)
 
-    def to_json(self) -> dict:
-        d = {"frames": [f.name for f in self.frames]}
+    def to_json(self) -> SpriteJSON:
+        sprite_json: SpriteJSON = {"frames": [f.name for f in self.frames]}
 
         if self.animations:
-            d["animations"] = {animation: [f.name for f in frames] for (animation, frames) in self.animations.items()}
+            sprite_json["animations"] = {
+                animation: [f.name for f in frames] for (animation, frames) in self.animations.items()
+            }
 
-        if self.nine_slice:
-            d["9slice"] = self.nine_slice
+        if self.slice9:
+            sprite_json["slice9"] = [rect.to_json() for rect in self.slice9]
 
-        return d
+        return sprite_json
 
     @classmethod
     def from_image(cls, name: str, file: Path) -> Sprite:
@@ -40,18 +49,19 @@ class Sprite:
         return sprite
 
     @classmethod
-    def from_sequence(cls, name_prefix: str, files: list[Path]) -> Sprite:
-        sprite_name_suffix = parse_filename(files[0]).sprite_name
-        sprite_name = f"{name_prefix}/{sprite_name_suffix}"
-        sprite = cls(sprite_name)
+    def from_sequence(cls, rel_path: str, files: list[Path]) -> Sprite:
+        sprite_name = parse_filename(files[0]).sprite_name
+        if rel_path:
+            sprite_name = f"{rel_path}/{sprite_name}"
 
+        sprite = cls(sprite_name)
         animations: dict[str, list[Frame]] = defaultdict(list)
 
         for file in sorted(files):
-            if name_prefix:
-                frame_name = f"{name_prefix}/{file.stem}"
-            else:
-                frame_name = file.stem
+            frame_name = file.stem
+            if rel_path:
+                frame_name = f"{rel_path}/{frame_name}"
+
             frame = Frame(frame_name, file)
             _, animation_name, frame_number = parse_filename(file)
             if animation_name:
@@ -110,7 +120,7 @@ class Sprite:
                 center_height = center.h
                 bottom_height = bounds.h - top_height - center_height
 
-                sprite.nine_slice = [
+                sprite.slice9 = [
                     Rect(left_x, top_y, left_width, top_height),  # top-left
                     Rect(center_x, top_y, center_width, top_height),  # top-center
                     Rect(right_x, top_y, right_width, top_height),  # top-right

@@ -1,10 +1,22 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import NotRequired, TypedDict
 
 from PIL import Image
 
-from sprak.rect import Rect
+
+class FrameJSON(TypedDict):
+    x: int
+    y: int
+    width: int
+    height: int
+    source_width: int
+    source_height: int
+    offset_x: int
+    offset_y: int
+    frame_number: NotRequired[int]
+    duration: NotRequired[int]
 
 
 class Frame:
@@ -50,8 +62,8 @@ class Frame:
     def is_empty(self) -> bool:
         return self.area == 0
 
-    def to_json(self) -> dict:
-        d = {
+    def to_json(self) -> FrameJSON:
+        frame_json: FrameJSON = {
             "x": self.x,
             "y": self.y,
             "width": self.width,
@@ -63,9 +75,9 @@ class Frame:
         }
 
         if self.frame_number:
-            d["frame_number"] = self.frame_number
+            frame_json["frame_number"] = self.frame_number
 
         if self.duration:
-            d["duration"] = self.duration
+            frame_json["duration"] = self.duration
 
-        return d
+        return frame_json
