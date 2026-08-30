@@ -11,21 +11,17 @@ from PIL import Image, ImageDraw, ImageFont, ImageText, UnidentifiedImageError
 
 from sprak import aseprite
 from sprak.frame import Frame, FrameJSON
+from sprak.json_types import AtlasJSON
 from sprak.log import logger
 from sprak.parse import parse_filename
 from sprak.rect import Rect
-from sprak.sprite import Sprite, SpriteJSON
+from sprak.sprite import Sprite
 
 SPRITE_ANIM_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<animation>\w+)\.(?P<frame>\d+)$", re.IGNORECASE)
 SPRITE_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<frame>\d+)$", re.IGNORECASE)
 
 FONT_M5X7 = Path(__file__).parent / "fonts" / "m5x7.ttf"
 FONT_SIZE = 16
-
-
-class AtlasJSON(TypedDict):
-    frames: dict[str, FrameJSON]
-    sprites: dict[str, SpriteJSON]
 
 
 class Atlas:

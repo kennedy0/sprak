@@ -3,19 +3,13 @@ from __future__ import annotations
 from collections import defaultdict
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import NotRequired, TypedDict
 
 from sprak import aseprite
 from sprak.frame import Frame
+from sprak.json_types import SpriteJSON
 from sprak.log import logger
 from sprak.parse import parse_filename
-from sprak.rect import Rect, RectJSON
-
-
-class SpriteJSON(TypedDict):
-    frames: list[str]
-    animations: NotRequired[dict[str, list[str]]]
-    slice9: NotRequired[list[RectJSON]]
+from sprak.rect import Rect
 
 
 class Sprite:

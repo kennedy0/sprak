@@ -1,13 +1,8 @@
 from __future__ import annotations
 
-from typing import NamedTuple, TypedDict
+from typing import NamedTuple
 
-
-class RectJSON(TypedDict):
-    x: int
-    y: int
-    w: int
-    h: int
+from sprak.json_types import RectJSON
 
 
 class Rect(NamedTuple):

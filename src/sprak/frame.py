@@ -1,22 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import NotRequired, TypedDict
 
 from PIL import Image
 
-
-class FrameJSON(TypedDict):
-    x: int
-    y: int
-    width: int
-    height: int
-    source_width: int
-    source_height: int
-    offset_x: int
-    offset_y: int
-    frame_number: NotRequired[int]
-    duration: NotRequired[int]
+from sprak.json_types import FrameJSON
 
 
 class Frame:
