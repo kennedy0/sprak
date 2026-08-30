@@ -19,7 +19,7 @@ from sprak.sprite import Sprite, SpriteJSON
 SPRITE_ANIM_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<animation>\w+)\.(?P<frame>\d+)$", re.IGNORECASE)
 SPRITE_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<frame>\d+)$", re.IGNORECASE)
 
-FONT_M5X7 = Path(__file__) / "fonts" / "m5x7.ttf"
+FONT_M5X7 = Path(__file__).parent / "fonts" / "m5x7.ttf"
 FONT_SIZE = 16
 
 
