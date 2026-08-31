@@ -6,7 +6,6 @@ from tempfile import TemporaryDirectory
 
 from sprak import aseprite
 from sprak.frame import Frame
-from sprak.json_types import SpriteJSON
 from sprak.log import logger
 from sprak.parse import parse_filename
 from sprak.rect import Rect
@@ -17,21 +16,17 @@ class Sprite:
         self.name = name
         self.frames: list[Frame] = []
         self.animations: dict[str, list[Frame]] = {}
-        self.slice9: list[Rect] = []
+        self.nine_slice: list[Rect] = []
 
-    def add_frame(self, frame: Frame) -> None:
-        self.frames.append(frame)
-
-    def to_json(self) -> SpriteJSON:
-        sprite_json: SpriteJSON = {"frames": [f.name for f in self.frames]}
+    def to_json(self) -> dict:
+        sprite_json = {"frames": [f.name for f in self.frames]}
 
         if self.animations:
-            sprite_json["animations"] = {
-                animation: [f.name for f in frames] for (animation, frames) in self.animations.items()
-            }
+            animations = {animation: [f.name for f in frames] for (animation, frames) in self.animations.items()}
+            sprite_json["animations"] = animations
 
-        if self.slice9:
-            sprite_json["slice9"] = [rect.to_json() for rect in self.slice9]
+        if self.nine_slice:
+            sprite_json["nine_slice"] = [rect.to_json() for rect in self.nine_slice]
 
         return sprite_json
 
@@ -114,7 +109,7 @@ class Sprite:
                 center_height = center.h
                 bottom_height = bounds.h - top_height - center_height
 
-                sprite.slice9 = [
+                sprite.nine_slice = [
                     Rect(left_x, top_y, left_width, top_height),  # top-left
                     Rect(center_x, top_y, center_width, top_height),  # top-center
                     Rect(right_x, top_y, right_width, top_height),  # top-right

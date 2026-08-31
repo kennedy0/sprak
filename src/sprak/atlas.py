@@ -5,13 +5,11 @@ import re
 import zipfile
 from collections import defaultdict
 from pathlib import Path
-from typing import TypedDict
 
 from PIL import Image, ImageDraw, ImageFont, ImageText, UnidentifiedImageError
 
 from sprak import aseprite
-from sprak.frame import Frame, FrameJSON
-from sprak.json_types import AtlasJSON
+from sprak.frame import Frame
 from sprak.log import logger
 from sprak.parse import parse_filename
 from sprak.rect import Rect
@@ -72,7 +70,7 @@ class Atlas:
 
         self._current_folder = None
 
-    def to_json(self) -> AtlasJSON:
+    def to_json(self) -> dict:
         return {
             "frames": {k: v.to_json() for k, v in self.frames.items()},
             "sprites": {k: v.to_json() for k, v in self.sprites.items()},

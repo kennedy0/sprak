@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from sprak.json_types import RectJSON
-
 
 class Rect(NamedTuple):
     x: int
@@ -43,7 +41,7 @@ class Rect(NamedTuple):
     def pil_rect(self) -> tuple[int, int, int, int]:
         return (self.x, self.y, self.x + self.w - 1, self.y + self.h - 1)
 
-    def to_json(self) -> RectJSON:
+    def to_json(self) -> dict:
         return {
             "x": self.x,
             "y": self.y,
