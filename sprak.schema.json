@@ -1,10 +1,163 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://raw.githubusercontent.com/kennedy0/sprak/refs/heads/main/sprak.schema.json",
-  "title": "Atlas",
-  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "Frame": {
+      "description": "A single image (or single frame of animation) in a sprite",
+      "properties": {
+        "x": {
+          "description": "Frame x-position",
+          "title": "X",
+          "type": "integer"
+        },
+        "y": {
+          "description": "Frame y-position",
+          "title": "Y",
+          "type": "integer"
+        },
+        "width": {
+          "description": "Frame width on the atlas, after trimming transparent edges",
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "description": "Frame height on the atlas, after trimming transparent edges",
+          "title": "Height",
+          "type": "integer"
+        },
+        "source_width": {
+          "description": "Width of the canvas in the original source file",
+          "title": "Source Width",
+          "type": "integer"
+        },
+        "source_height": {
+          "description": "Height of the canvas in the original source file",
+          "title": "Source Height",
+          "type": "integer"
+        },
+        "offset_x": {
+          "description": "The leftmost pixel's distance from the canvas edge",
+          "title": "Offset X",
+          "type": "integer"
+        },
+        "offset_y": {
+          "description": "The topmost pixel's distance from the canvas edge",
+          "title": "Offset Y",
+          "type": "integer"
+        },
+        "frame_number": {
+          "description": "The frame number",
+          "title": "Frame Number",
+          "type": "integer"
+        },
+        "duration": {
+          "description": "The duration of the frame in milliseconds",
+          "title": "Duration",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height",
+        "source_width",
+        "source_height",
+        "offset_x",
+        "offset_y"
+      ],
+      "title": "Frame",
+      "type": "object"
+    },
+    "Rect": {
+      "properties": {
+        "x": {
+          "title": "X",
+          "type": "integer"
+        },
+        "y": {
+          "title": "Y",
+          "type": "integer"
+        },
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "Rect",
+      "type": "object"
+    },
+    "Sprite": {
+      "description": "A collection of one or more frames",
+      "properties": {
+        "frames": {
+          "description": "A list of frame names in the sprite",
+          "items": {
+            "type": "string"
+          },
+          "title": "Frames",
+          "type": "array"
+        },
+        "animations": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "Key-value pairs of named animations and the frame names used in each animation",
+          "title": "Animations",
+          "type": "object"
+        },
+        "nine_slice": {
+          "description": "An array of rectangles, from top-left to bottom-right, that subdivide the sprite for 9-slice scaling",
+          "items": {
+            "$ref": "#/$defs/Rect"
+          },
+          "title": "Nine Slice",
+          "type": "array"
+        }
+      },
+      "required": [
+        "frames"
+      ],
+      "title": "Sprite",
+      "type": "object"
+    }
+  },
+  "description": "Contains data about all frames and sprites packed into the texture atlas",
   "properties": {
-    "frames": {},
-    "sprites": {}
-  }
+    "frames": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Frame"
+      },
+      "description": "All frames in the atlas",
+      "title": "Frames",
+      "type": "object"
+    },
+    "sprites": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Sprite"
+      },
+      "description": "All sprites in the atlas",
+      "title": "Sprites",
+      "type": "object"
+    }
+  },
+  "required": [
+    "frames",
+    "sprites"
+  ],
+  "title": "Atlas",
+  "type": "object"
 }

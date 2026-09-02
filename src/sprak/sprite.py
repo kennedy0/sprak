@@ -6,6 +6,7 @@ from tempfile import TemporaryDirectory
 
 from sprak import aseprite
 from sprak.frame import Frame
+from sprak.json_types import SpriteJSON
 from sprak.log import logger
 from sprak.parse import parse_filename
 from sprak.rect import Rect
@@ -18,8 +19,8 @@ class Sprite:
         self.animations: dict[str, list[Frame]] = {}
         self.nine_slice: list[Rect] = []
 
-    def to_json(self) -> dict:
-        sprite_json = {"frames": [f.name for f in self.frames]}
+    def to_json(self) -> SpriteJSON:
+        sprite_json: SpriteJSON = {"frames": [f.name for f in self.frames]}
 
         if self.animations:
             animations = {animation: [f.name for f in frames] for (animation, frames) in self.animations.items()}
@@ -90,24 +91,24 @@ class Sprite:
             bounds = slices[0]["keys"][0].get("bounds")
             center = slices[0]["keys"][0].get("center")
             if bounds and center:
-                bounds = Rect(**bounds)
-                center = Rect(**center)
+                bounds = Rect(bounds["x"], bounds["y"], bounds["w"], bounds["h"])
+                center = Rect(center["x"], center["y"], center["w"], center["h"])
 
                 left_x = bounds.x
                 center_x = bounds.x + center.x
-                right_x = bounds.x + center.x + center.w
+                right_x = bounds.x + center.x + center.width
 
                 top_y = bounds.y
                 center_y = bounds.y + center.y
-                bottom_y = bounds.y + center.y + center.h
+                bottom_y = bounds.y + center.y + center.height
 
                 left_width = center_x - left_x
-                center_width = center.w
-                right_width = bounds.w - left_width - center_width
+                center_width = center.width
+                right_width = bounds.width - left_width - center_width
 
                 top_height = center_y - top_y
-                center_height = center.h
-                bottom_height = bounds.h - top_height - center_height
+                center_height = center.height
+                bottom_height = bounds.height - top_height - center_height
 
                 sprite.nine_slice = [
                     Rect(left_x, top_y, left_width, top_height),  # top-left

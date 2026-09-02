@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageText, UnidentifiedImageError
 
 from sprak import aseprite
 from sprak.frame import Frame
+from sprak.json_types import AtlasJSON
 from sprak.log import logger
 from sprak.parse import parse_filename
 from sprak.rect import Rect
@@ -70,7 +71,7 @@ class Atlas:
 
         self._current_folder = None
 
-    def to_json(self) -> dict:
+    def to_json(self) -> AtlasJSON:
         return {
             "frames": {k: v.to_json() for k, v in self.frames.items()},
             "sprites": {k: v.to_json() for k, v in self.sprites.items()},
@@ -246,7 +247,7 @@ class Atlas:
     def _find_region(self, frame: Frame, regions: list[Rect]) -> Rect | None:
         """Find a region that the frame fits into."""
         for region in regions:
-            if frame.width <= region.w and frame.height <= region.h:
+            if frame.width <= region.width and frame.height <= region.height:
                 return region
 
         return None
@@ -275,9 +276,9 @@ class Atlas:
         bottom_h = region.bottom - y + 1
 
         top = Rect(x, region.y, right_w, top_h)
-        bottom = Rect(region.x, y, region.w, bottom_h)
+        bottom = Rect(region.x, y, region.width, bottom_h)
         left = Rect(region.x, y, left_w, bottom_h)
-        right = Rect(x, region.y, right_w, region.h)
+        right = Rect(x, region.y, right_w, region.height)
 
         horizontal = []
         if not top.is_empty:

@@ -30,6 +30,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "pydantic>=2.13.5",
     "ruff>=0.16.3",
     "ty>=0.0.72",
 ]

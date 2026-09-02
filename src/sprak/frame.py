@@ -4,6 +4,8 @@ from pathlib import Path
 
 from PIL import Image
 
+from sprak.json_types import FrameJSON
+
 
 class Frame:
     def __init__(self, name: str, file: str | Path) -> None:
@@ -48,8 +50,8 @@ class Frame:
     def is_empty(self) -> bool:
         return self.area == 0
 
-    def to_json(self) -> dict:
-        frame_json = {
+    def to_json(self) -> FrameJSON:
+        frame_json: FrameJSON = {
             "x": self.x,
             "y": self.y,
             "width": self.width,
