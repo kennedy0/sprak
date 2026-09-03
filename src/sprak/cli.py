@@ -7,6 +7,7 @@ from pathlib import Path
 
 from sprak import pack
 from sprak.log import logger
+from sprak.viewer import view_atlas_json_and_png, view_atlas_zip
 
 
 def pack_sprites() -> None:
@@ -56,6 +57,20 @@ def pack_sprites() -> None:
         fps=args.fps,
     )
     logger.info(f"sprites packed in {round(time.time() - start, 3)}s")
+
+
+def view_atlas() -> None:
+    parser = ArgumentParser(prog="sprak-viewer", description="View atlas image and metadata.")
+    parser.add_argument(
+        "atlas", nargs="+", help="the atlas file; can be either a single ZIP file, or separate JSON and PNG files"
+    )
+    args = parser.parse_args(sys.argv[1:])
+    if len(args.atlas) == 1:
+        view_atlas_zip(args.atlas[0])
+    elif len(args.atlas) == 2:
+        view_atlas_json_and_png(args.atlas)
+    else:
+        parser.error("must provide either one ZIP file, or separate JSON and PNG files")
 
 
 def _get_version_str() -> str:

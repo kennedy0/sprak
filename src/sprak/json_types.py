@@ -20,7 +20,7 @@ class Atlas(TypedDict):
 
 
 class Frame(TypedDict):
-    """A single image (or single frame of animation) in a sprite"""
+    """A single image on the atlas"""
 
     x: Annotated[int, Field(description="Frame x-position")]
     y: Annotated[int, Field(description="Frame y-position")]
@@ -28,8 +28,8 @@ class Frame(TypedDict):
     height: Annotated[int, Field(description="Frame height on the atlas, after trimming transparent edges")]
     source_width: Annotated[int, Field(description="Width of the canvas in the original source file")]
     source_height: Annotated[int, Field(description="Height of the canvas in the original source file")]
-    offset_x: Annotated[int, Field(description="The leftmost pixel's distance from the canvas edge")]
-    offset_y: Annotated[int, Field(description="The topmost pixel's distance from the canvas edge")]
+    offset_x: Annotated[int, Field(description="The leftmost pixel's distance from the left edge of the canvas")]
+    offset_y: Annotated[int, Field(description="The topmost pixel's distance from the top edge of the canvas")]
     frame_number: Annotated[NotRequired[int], Field(description="The frame number")]
     duration: Annotated[NotRequired[int], Field(description="The duration of the frame in milliseconds")]
 

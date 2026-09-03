@@ -6,7 +6,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageText, UnidentifiedImageError
+from PIL import Image, ImageDraw, ImageFont, ImageText
 
 from sprak import aseprite
 from sprak.frame import Frame
@@ -15,6 +15,7 @@ from sprak.log import logger
 from sprak.parse import parse_filename
 from sprak.rect import Rect
 from sprak.sprite import Sprite
+from sprak.utils import is_image_file
 
 SPRITE_ANIM_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<animation>\w+)\.(?P<frame>\d+)$", re.IGNORECASE)
 SPRITE_FRAME_RE = re.compile(r"^(?P<sprite>[\w/]+)\.(?P<frame>\d+)$", re.IGNORECASE)
@@ -354,17 +355,3 @@ def group_sequences(files: list[Path]) -> list[list[Path]]:
             sequences[seq_name].append(file)
 
     return list(sequences.values())
-
-
-def is_image_file(file: str | Path) -> bool:
-    """Check if the file can be opened by PIL."""
-    try:
-        with Image.open(file) as im:
-            im.verify()
-        return True
-    except UnidentifiedImageError:
-        pass
-    except Exception as e:  # noqa: BLE001
-        logger.error(e)
-
-    return False

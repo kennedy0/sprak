@@ -3,7 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$defs": {
     "Frame": {
-      "description": "A single image (or single frame of animation) in a sprite",
+      "description": "A single image on the atlas",
       "properties": {
         "x": {
           "description": "Frame x-position",
@@ -36,12 +36,12 @@
           "type": "integer"
         },
         "offset_x": {
-          "description": "The leftmost pixel's distance from the canvas edge",
+          "description": "The leftmost pixel's distance from the left edge of the canvas",
           "title": "Offset X",
           "type": "integer"
         },
         "offset_y": {
-          "description": "The topmost pixel's distance from the canvas edge",
+          "description": "The topmost pixel's distance from the top edge of the canvas",
           "title": "Offset Y",
           "type": "integer"
         },

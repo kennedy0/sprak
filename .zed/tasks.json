@@ -1,7 +1,17 @@
 [
   {
-    "label": "main",
-    "command": "uv run src/sprak/main.py",
+    "label": "generate examples",
+    "command": "uv run generate-examples.py",
+    "save": "all",
+  },
+  {
+    "label": "generate schema",
+    "command": "uv run generate-schema.py",
+    "save": "all",
+  },
+  {
+    "label": "view examples",
+    "command": "uv run sprak-view examples/example.zip",
     "save": "all",
   },
 ]
