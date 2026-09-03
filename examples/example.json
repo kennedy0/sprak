@@ -421,8 +421,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 222,
-      "y": 75
+      "x": 114,
+      "y": 165
     },
     "tile_0001": {
       "height": 18,
@@ -431,8 +431,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 204,
-      "y": 75
+      "x": 114,
+      "y": 183
     },
     "tile_0002": {
       "height": 18,
@@ -441,8 +441,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 177,
-      "y": 0
+      "x": 222,
+      "y": 111
     },
     "tile_0003": {
       "height": 18,
@@ -451,8 +451,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 222,
-      "y": 21
+      "x": 168,
+      "y": 111
     },
     "tile_0004": {
       "height": 18,
@@ -461,8 +461,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 132,
-      "y": 57
+      "x": 168,
+      "y": 129
     },
     "tile_0005": {
       "height": 18,
@@ -481,8 +481,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 132,
-      "y": 21
+      "x": 204,
+      "y": 129
     },
     "tile_0007": {
       "height": 14,
@@ -511,8 +511,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
-      "y": 75
+      "x": 231,
+      "y": 0
     },
     "tile_0010": {
       "height": 18,
@@ -521,8 +521,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 132,
-      "y": 147
+      "x": 186,
+      "y": 129
     },
     "tile_0011": {
       "height": 18,
@@ -532,7 +532,7 @@
       "source_width": 18,
       "width": 18,
       "x": 114,
-      "y": 129
+      "y": 237
     },
     "tile_0012": {
       "height": 18,
@@ -541,8 +541,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 96,
-      "y": 75
+      "x": 222,
+      "y": 129
     },
     "tile_0013": {
       "height": 18,
@@ -551,8 +551,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 231,
-      "y": 0
+      "x": 132,
+      "y": 147
     },
     "tile_0014": {
       "height": 18,
@@ -561,8 +561,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 150,
-      "y": 93
+      "x": 114,
+      "y": 147
     },
     "tile_0015": {
       "height": 18,
@@ -571,8 +571,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 168,
-      "y": 39
+      "x": 114,
+      "y": 201
     },
     "tile_0016": {
       "height": 18,
@@ -581,8 +581,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 132,
-      "y": 93
+      "x": 204,
+      "y": 111
     },
     "tile_0017": {
       "height": 18,
@@ -591,8 +591,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 168,
-      "y": 21
+      "x": 186,
+      "y": 111
     },
     "tile_0018": {
       "height": 18,
@@ -601,8 +601,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 186,
-      "y": 39
+      "x": 204,
+      "y": 21
     },
     "tile_0019": {
       "height": 18,
@@ -611,8 +611,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 96,
-      "y": 201
+      "x": 222,
+      "y": 21
     },
     "tile_0020": {
       "height": 18,
@@ -621,8 +621,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 186,
-      "y": 129
+      "x": 132,
+      "y": 21
     },
     "tile_0021": {
       "height": 18,
@@ -631,8 +631,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 186,
-      "y": 75
+      "x": 114,
+      "y": 21
     },
     "tile_0022": {
       "height": 18,
@@ -641,8 +641,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 96,
-      "y": 93
+      "x": 159,
+      "y": 0
     },
     "tile_0023": {
       "height": 18,
@@ -651,8 +651,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 168,
-      "y": 111
+      "x": 213,
+      "y": 0
     },
     "tile_0024": {
       "height": 18,
@@ -661,8 +661,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 132,
-      "y": 39
+      "x": 186,
+      "y": 21
     },
     "tile_0025": {
       "height": 18,
@@ -671,8 +671,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
-      "y": 165
+      "x": 96,
+      "y": 39
     },
     "tile_0026": {
       "height": 18,
@@ -681,8 +681,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
-      "y": 21
+      "x": 150,
+      "y": 39
     },
     "tile_0027": {
       "height": 12,
@@ -701,7 +701,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 168,
+      "x": 114,
       "y": 129
     },
     "tile_0029": {
@@ -721,7 +721,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 186,
+      "x": 168,
       "y": 21
     },
     "tile_0031": {
@@ -731,7 +731,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 222,
+      "x": 114,
       "y": 39
     },
     "tile_0032": {
@@ -742,7 +742,7 @@
       "source_width": 18,
       "width": 12,
       "x": 240,
-      "y": 108
+      "y": 90
     },
     "tile_0033": {
       "height": 18,
@@ -751,8 +751,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 150,
-      "y": 21
+      "x": 132,
+      "y": 39
     },
     "tile_0034": {
       "height": 18,
@@ -762,7 +762,7 @@
       "source_width": 18,
       "width": 18,
       "x": 150,
-      "y": 111
+      "y": 21
     },
     "tile_0035": {
       "height": 18,
@@ -771,8 +771,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 132,
-      "y": 75
+      "x": 96,
+      "y": 21
     },
     "tile_0036": {
       "height": 18,
@@ -781,8 +781,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 96,
-      "y": 111
+      "x": 177,
+      "y": 0
     },
     "tile_0037": {
       "height": 18,
@@ -791,8 +791,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 186,
-      "y": 111
+      "x": 195,
+      "y": 0
     },
     "tile_0038": {
       "height": 0,
@@ -811,8 +811,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 186,
-      "y": 57
+      "x": 150,
+      "y": 129
     },
     "tile_0040": {
       "height": 18,
@@ -821,8 +821,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
-      "y": 183
+      "x": 222,
+      "y": 39
     },
     "tile_0041": {
       "height": 18,
@@ -832,7 +832,7 @@
       "source_width": 18,
       "width": 18,
       "x": 204,
-      "y": 129
+      "y": 39
     },
     "tile_0042": {
       "height": 18,
@@ -842,7 +842,7 @@
       "source_width": 18,
       "width": 18,
       "x": 186,
-      "y": 93
+      "y": 57
     },
     "tile_0043": {
       "height": 18,
@@ -851,8 +851,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
-      "y": 93
+      "x": 204,
+      "y": 57
     },
     "tile_0044": {
       "height": 12,
@@ -861,7 +861,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 14,
-      "x": 209,
+      "x": 195,
       "y": 161
     },
     "tile_0045": {
@@ -871,7 +871,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 14,
-      "x": 195,
+      "x": 209,
       "y": 161
     },
     "tile_0046": {
@@ -891,8 +891,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 222,
-      "y": 93
+      "x": 150,
+      "y": 75
     },
     "tile_0048": {
       "height": 18,
@@ -901,8 +901,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 96,
-      "y": 57
+      "x": 132,
+      "y": 93
     },
     "tile_0049": {
       "height": 18,
@@ -911,8 +911,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 213,
-      "y": 0
+      "x": 96,
+      "y": 111
     },
     "tile_0050": {
       "height": 18,
@@ -921,8 +921,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
-      "y": 111
+      "x": 204,
+      "y": 75
     },
     "tile_0051": {
       "height": 15,
@@ -942,7 +942,7 @@
       "source_width": 18,
       "width": 12,
       "x": 240,
-      "y": 90
+      "y": 108
     },
     "tile_0053": {
       "height": 18,
@@ -951,8 +951,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
-      "y": 237
+      "x": 132,
+      "y": 75
     },
     "tile_0054": {
       "height": 18,
@@ -962,7 +962,7 @@
       "source_width": 18,
       "width": 14,
       "x": 240,
-      "y": 21
+      "y": 57
     },
     "tile_0055": {
       "height": 18,
@@ -981,40 +981,10 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 204,
-      "y": 111
+      "x": 168,
+      "y": 57
     },
     "tile_0057": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 168,
-      "y": 75
-    },
-    "tile_0058": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 114,
-      "y": 201
-    },
-    "tile_0059": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 96,
-      "y": 237
-    },
-    "tile_0060": {
       "height": 18,
       "offset_x": 0,
       "offset_y": 0,
@@ -1024,6 +994,36 @@
       "x": 222,
       "y": 57
     },
+    "tile_0058": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 150,
+      "y": 111
+    },
+    "tile_0059": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 132,
+      "y": 111
+    },
+    "tile_0060": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 150,
+      "y": 93
+    },
     "tile_0061": {
       "height": 18,
       "offset_x": 0,
@@ -1031,7 +1031,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 204,
+      "x": 222,
       "y": 93
     },
     "tile_0062": {
@@ -1041,8 +1041,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 222,
-      "y": 111
+      "x": 96,
+      "y": 183
     },
     "tile_0063": {
       "height": 18,
@@ -1051,8 +1051,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 159,
-      "y": 0
+      "x": 96,
+      "y": 165
     },
     "tile_0064": {
       "height": 14,
@@ -1112,7 +1112,7 @@
       "source_width": 18,
       "width": 14,
       "x": 240,
-      "y": 57
+      "y": 21
     },
     "tile_0070": {
       "height": 8,
@@ -1131,150 +1131,10 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 168,
-      "y": 57
-    },
-    "tile_0072": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 150,
-      "y": 129
-    },
-    "tile_0073": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 96,
-      "y": 183
-    },
-    "tile_0074": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 150,
-      "y": 75
-    },
-    "tile_0075": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 96,
-      "y": 129
-    },
-    "tile_0076": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 96,
-      "y": 165
-    },
-    "tile_0077": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 195,
-      "y": 0
-    },
-    "tile_0078": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 204,
-      "y": 21
-    },
-    "tile_0079": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 96,
-      "y": 147
-    },
-    "tile_0080": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 222,
-      "y": 129
-    },
-    "tile_0081": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 96,
-      "y": 39
-    },
-    "tile_0082": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 132,
+      "x": 114,
       "y": 111
     },
-    "tile_0083": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 204,
-      "y": 57
-    },
-    "tile_0084": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 168,
-      "y": 93
-    },
-    "tile_0085": {
-      "height": 18,
-      "offset_x": 0,
-      "offset_y": 0,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 18,
-      "x": 114,
-      "y": 147
-    },
-    "tile_0086": {
+    "tile_0072": {
       "height": 18,
       "offset_x": 0,
       "offset_y": 0,
@@ -1284,7 +1144,7 @@
       "x": 96,
       "y": 219
     },
-    "tile_0087": {
+    "tile_0073": {
       "height": 18,
       "offset_x": 0,
       "offset_y": 0,
@@ -1292,7 +1152,147 @@
       "source_width": 18,
       "width": 18,
       "x": 96,
-      "y": 21
+      "y": 237
+    },
+    "tile_0074": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 168,
+      "y": 93
+    },
+    "tile_0075": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 204,
+      "y": 93
+    },
+    "tile_0076": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 96,
+      "y": 201
+    },
+    "tile_0077": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 96,
+      "y": 147
+    },
+    "tile_0078": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 222,
+      "y": 75
+    },
+    "tile_0079": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 96,
+      "y": 93
+    },
+    "tile_0080": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 96,
+      "y": 75
+    },
+    "tile_0081": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 150,
+      "y": 57
+    },
+    "tile_0082": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 168,
+      "y": 39
+    },
+    "tile_0083": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 114,
+      "y": 57
+    },
+    "tile_0084": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 114,
+      "y": 75
+    },
+    "tile_0085": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 168,
+      "y": 75
+    },
+    "tile_0086": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 114,
+      "y": 93
+    },
+    "tile_0087": {
+      "height": 18,
+      "offset_x": 0,
+      "offset_y": 0,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 18,
+      "x": 186,
+      "y": 75
     },
     "tile_0088": {
       "height": 18,
@@ -1301,8 +1301,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 150,
-      "y": 39
+      "x": 96,
+      "y": 129
     },
     "tile_0089": {
       "height": 18,
@@ -1322,7 +1322,7 @@
       "source_width": 18,
       "width": 18,
       "x": 171,
-      "y": 173
+      "y": 159
     },
     "tile_0091": {
       "height": 6,
@@ -1342,7 +1342,7 @@
       "source_width": 18,
       "width": 18,
       "x": 171,
-      "y": 159
+      "y": 173
     },
     "tile_0093": {
       "height": 17,
@@ -1352,7 +1352,7 @@
       "source_width": 18,
       "width": 17,
       "x": 132,
-      "y": 218
+      "y": 235
     },
     "tile_0094": {
       "height": 17,
@@ -1362,7 +1362,7 @@
       "source_width": 18,
       "width": 17,
       "x": 132,
-      "y": 235
+      "y": 218
     },
     "tile_0095": {
       "height": 18,
@@ -1371,7 +1371,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
+      "x": 132,
       "y": 57
     },
     "tile_0096": {
@@ -1381,7 +1381,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 114,
+      "x": 186,
       "y": 39
     },
     "tile_0097": {
@@ -1391,8 +1391,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 204,
-      "y": 39
+      "x": 96,
+      "y": 57
     },
     "tile_0098": {
       "height": 14,
@@ -1421,8 +1421,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 18,
-      "x": 150,
-      "y": 57
+      "x": 186,
+      "y": 93
     },
     "transparent": {
       "height": 0,
@@ -1451,8 +1451,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 10,
-      "x": 235,
-      "y": 187
+      "x": 195,
+      "y": 201
     },
     "ui/eight_big": {
       "height": 14,
@@ -1461,30 +1461,10 @@
       "source_height": 18,
       "source_width": 18,
       "width": 12,
-      "x": 219,
-      "y": 173
+      "x": 84,
+      "y": 190
     },
     "ui/five": {
-      "height": 12,
-      "offset_x": 4,
-      "offset_y": 3,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 10,
-      "x": 235,
-      "y": 199
-    },
-    "ui/five_big": {
-      "height": 14,
-      "offset_x": 3,
-      "offset_y": 2,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 12,
-      "x": 84,
-      "y": 232
-    },
-    "ui/four": {
       "height": 12,
       "offset_x": 4,
       "offset_y": 3,
@@ -1494,27 +1474,27 @@
       "x": 205,
       "y": 199
     },
-    "ui/four_big": {
+    "ui/five_big": {
       "height": 14,
       "offset_x": 3,
       "offset_y": 2,
       "source_height": 18,
       "source_width": 18,
       "width": 12,
-      "x": 84,
-      "y": 204
+      "x": 207,
+      "y": 173
     },
-    "ui/nine": {
+    "ui/four": {
       "height": 12,
       "offset_x": 4,
       "offset_y": 3,
       "source_height": 18,
       "source_width": 18,
       "width": 10,
-      "x": 215,
+      "x": 235,
       "y": 187
     },
-    "ui/nine_big": {
+    "ui/four_big": {
       "height": 14,
       "offset_x": 3,
       "offset_y": 2,
@@ -1524,6 +1504,26 @@
       "x": 195,
       "y": 173
     },
+    "ui/nine": {
+      "height": 12,
+      "offset_x": 4,
+      "offset_y": 3,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 10,
+      "x": 235,
+      "y": 199
+    },
+    "ui/nine_big": {
+      "height": 14,
+      "offset_x": 3,
+      "offset_y": 2,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 12,
+      "x": 231,
+      "y": 173
+    },
     "ui/one": {
       "height": 12,
       "offset_x": 4,
@@ -1531,8 +1531,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 10,
-      "x": 225,
-      "y": 187
+      "x": 215,
+      "y": 199
     },
     "ui/one_big": {
       "height": 14,
@@ -1551,7 +1551,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 12,
-      "x": 223,
+      "x": 235,
       "y": 161
     },
     "ui/seven": {
@@ -1561,7 +1561,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 10,
-      "x": 215,
+      "x": 225,
       "y": 199
     },
     "ui/seven_big": {
@@ -1571,8 +1571,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 12,
-      "x": 84,
-      "y": 218
+      "x": 219,
+      "y": 173
     },
     "ui/six": {
       "height": 12,
@@ -1581,7 +1581,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 10,
-      "x": 245,
+      "x": 215,
       "y": 187
     },
     "ui/six_big": {
@@ -1591,8 +1591,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 12,
-      "x": 231,
-      "y": 173
+      "x": 84,
+      "y": 218
     },
     "ui/text_box.0001": {
       "duration": 100,
@@ -1613,30 +1613,10 @@
       "source_height": 18,
       "source_width": 18,
       "width": 10,
-      "x": 195,
-      "y": 201
-    },
-    "ui/three_big": {
-      "height": 14,
-      "offset_x": 3,
-      "offset_y": 2,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 12,
-      "x": 207,
-      "y": 173
-    },
-    "ui/two": {
-      "height": 12,
-      "offset_x": 4,
-      "offset_y": 3,
-      "source_height": 18,
-      "source_width": 18,
-      "width": 10,
       "x": 205,
       "y": 187
     },
-    "ui/two_big": {
+    "ui/three_big": {
       "height": 14,
       "offset_x": 3,
       "offset_y": 2,
@@ -1646,6 +1626,26 @@
       "x": 243,
       "y": 173
     },
+    "ui/two": {
+      "height": 12,
+      "offset_x": 4,
+      "offset_y": 3,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 10,
+      "x": 225,
+      "y": 187
+    },
+    "ui/two_big": {
+      "height": 14,
+      "offset_x": 3,
+      "offset_y": 2,
+      "source_height": 18,
+      "source_width": 18,
+      "width": 12,
+      "x": 84,
+      "y": 204
+    },
     "ui/x": {
       "height": 12,
       "offset_x": 3,
@@ -1653,7 +1653,7 @@
       "source_height": 18,
       "source_width": 18,
       "width": 12,
-      "x": 235,
+      "x": 223,
       "y": 161
     },
     "ui/zero": {
@@ -1663,8 +1663,8 @@
       "source_height": 18,
       "source_width": 18,
       "width": 10,
-      "x": 225,
-      "y": 199
+      "x": 245,
+      "y": 187
     },
     "ui/zero_big": {
       "height": 14,
@@ -1674,7 +1674,7 @@
       "source_width": 18,
       "width": 12,
       "x": 84,
-      "y": 190
+      "y": 232
     }
   },
   "sprites": {

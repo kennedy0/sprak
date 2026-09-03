@@ -2,7 +2,7 @@
 
 Sprak is a sprite packing tool written in Python.
 
-![an animation of sprites being packed onto an atlas](examples/example.gif)
+![examples/example.gif](examples/example.gif)
 
 Sprak is built with 2D pixel art games in mind, supports the [Aseprite](https://www.aseprite.org/) file format, and exports simple PNG and JSON files for easy integration into any engine.
 
@@ -228,7 +228,7 @@ Alternatively, you can set the `SPRAK_ASEPRITE_EXE_PATH` environment variable to
 
 #### Example
 
-![an image of the aseprite timeilne](img/aseprite_timeline.png)
+![img/aseprite_timeline.png](img/aseprite_timeline.png)
 
 ```
 🗀 sprites/
@@ -276,6 +276,24 @@ uvx sprak sprites --json atlas.json
 }
 ```
 
+## Exporting GIFs
+
+Sprak can export an animated GIF of the sprites being packed. This is useful for visualizing and debugging the sprite packing process. It is also just fun to watch.
+
+_**Warning:**_ _Saving large images with lots of sprites can cause you to run out of memory or produce very large GIFs that don't play back very well._
+
+```sh
+uvx sprak examples/sprites --gif atlas.gif
+```
+
+![examples/example.gif](examples/example.gif)
+
+```sh
+uvx sprak examples/sprites --debug-gif atlas_debug.gif
+```
+
+![examples/example_debug.gif](examples/example_debug.gif)
+
 ## Viewer
 
 Sprak ships with a simple viewer application to view your atlas.
@@ -290,23 +308,7 @@ uvx sprak-view examples/example.zip
 uvx sprak-view examples/example.json examples/example.png
 ```
 
-## Exporting GIFs
-
-Sprak can export an animated GIF of the sprites being packed. This can be useful for debugging, and is also just fun to watch.
-
-_**Warning:**_ _Saving large images with lots of sprites can cause you to run out of memory or produce very large GIFs that don't play back very well._
-
-```sh
-uvx sprak examples/sprites --gif atlas.gif
-```
-
-![gif](examples/example.gif)
-
-```sh
-uvx sprak examples/sprites --debug-gif atlas_debug.gif
-```
-
-![debug gif](examples/example_debug.gif)
+![img/sprak_viewer.png](img/sprak_viewer.png)
 
 ## Using in a game
 

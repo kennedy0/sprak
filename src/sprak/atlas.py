@@ -121,7 +121,15 @@ class Atlas:
             atlas_image.paste(frame.image, box=(frame.x, frame.y))
             images.append(atlas_image.copy())
 
-        images[0].save(file, format="GIF", save_all=True, disposal=2, append_images=images[1:], duration=1000 / fps)
+        images[0].save(
+            file,
+            format="GIF",
+            save_all=True,
+            disposal=2,
+            append_images=images[1:],
+            duration=1000 / fps,
+            loop=0,
+        )
 
     def write_debug_gif(self, file: str | Path, fps: float = 10) -> None:
         if fps <= 0:
@@ -179,7 +187,15 @@ class Atlas:
 
             images.append(image)
 
-        images[0].save(file, format="GIF", save_all=True, disposal=2, append_images=images[1:], duration=1000 / fps)
+        images[0].save(
+            file,
+            format="GIF",
+            save_all=True,
+            disposal=2,
+            append_images=images[1:],
+            duration=1000 / fps,
+            loop=0,
+        )
 
     def _get_sprite_name(self, file: Path) -> str:
         """Get a sprite name by using its file name relative to the source folder that it was added from."""
