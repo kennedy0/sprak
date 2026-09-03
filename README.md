@@ -87,11 +87,11 @@ A sprite is a higher-order abstraction that contains one or more frames. A sprit
 Frames and sprites are automatically named based on the file's relative path to the source folder that was added.
 
 ```
-🗀 sprites/
-  🖻 Brick.png
-  🗀 characters/
-    🖻 Luigi.png
-    🖻 Mario.png
+sprites/
+  ├─ Brick.png
+  └─ characters/
+      ├─ Luigi.png
+      └─ Mario.png
 ```
 
 ```sh
@@ -132,11 +132,11 @@ Sprak detects image sequences with the pattern `<sprite>.<frame_number>.<ext>`. 
 #### Example:
 
 ```
-🗀 sprites/
-  🗀 characters/
-    🖻 Mario.0001.png
-    🖻 Mario.0002.png
-    🖻 Mario.0003.png
+sprites/
+  └─ characters/
+      ├─ Mario.0001.png
+      ├─ Mario.0002.png
+      └─ Mario.0003.png
 ```
 
 ```sh
@@ -169,13 +169,13 @@ Frames can also be grouped into animations using the pattern `<sprite>.<animatio
 #### Example:
 
 ```
-🗀 sprites/
-  🗀 characters/
-    🖻 Mario.Idle.0001.png
-    🖻 Mario.Jump.0001.png
-    🖻 Mario.Run.0001.png
-    🖻 Mario.Run.0002.png
-    🖻 Mario.Run.0003.png
+sprites/
+  └─ characters/
+      ├─ Mario.Idle.0001.png
+      ├─ Mario.Jump.0001.png
+      ├─ Mario.Run.0001.png
+      ├─ Mario.Run.0002.png
+      └─ Mario.Run.0003.png
 ```
 
 ```sh
@@ -231,9 +231,9 @@ Alternatively, you can set the `SPRAK_ASEPRITE_EXE_PATH` environment variable to
 ![img/aseprite_timeline.png](img/aseprite_timeline.png)
 
 ```
-🗀 sprites/
-  🗀 characters/
-    🖻 Mario.aseprite
+sprites/
+  └─ characters/
+      └─ Mario.aseprite
 ```
 
 ```sh
