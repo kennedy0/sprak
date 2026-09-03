@@ -308,6 +308,16 @@ uvx sprak examples/sprites --debug-gif atlas_debug.gif
 
 ![debug gif](examples/example_debug.gif)
 
+## Using in a game
+
+To use the atlas in a game, you need to reconstruct the original images that were packed into the atlas. All of the information required to do this is present in the atlas JSON data.
+
+Frames can be located on the atlas using a frame's `x`, `y`, `width`, and `height` properties. Because sprak trims transparent edges to save space, the rectangular area the frame occupies in the atlas may differ from the original resolution of the file it was created from. When recreating the frame in your game, you should use the `source_width` and `source_height` properties to determine the image resolution, and the `offset_x` and `offset_y` properties to determine the frame's offset from the top-left corner of the canvas.
+
+Sprites make it easy to turn the frames into animations, particularly when they come from an Asperite file. The `frames` property lists all frames in the sprite, whether or not the frames are explicitly part of an animation. The `animations` property lists a subset of sprite's frames for each named animation that was present in the source file.
+
+If present, frame's `duration` property specifies the frame's duration in miliseconds.
+
 ## Development
 
 Create venv and sync dependencies:
