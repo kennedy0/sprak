@@ -1,19 +1,17 @@
 # sprak
 
-Sprak is a sprite packing tool written in Python.
+Sprak is a sprite packing tool for pixel art games with first-class support for [Aseprite](https://www.aseprite.org/) files.
 
 ![examples/example.gif](examples/example.gif)
-
-Sprak is built with 2D pixel art games in mind, supports the [Aseprite](https://www.aseprite.org/) file format, and exports simple PNG and JSON files for easy integration into any engine.
 
 **Want to get started quickly?** If you have [uv](https://docs.astral.sh/uv/) installed, you can run sprak right now with `uvx sprak --help` and see instructions on how to use it.
 
 ## Using sprak as a standalone tool
 
-The easiest way to run sprak is as a standalone tool using `uv`; no Python installation required:
+The easiest way to run sprak is as a standalone tool using `uv`:
 
 ```sh
-# Pack the "examples/sprites/" folder into an "atlas.zip" file
+# Pack the "examples/sprites" folder into an "atlas.zip" file
 uvx sprak examples/sprites --zip atlas.zip
 ```
 
@@ -64,15 +62,15 @@ atlas.write_zip(Path("atlas.zip"))
 
 ## How does sprak work?
 
-Sprak collects images from files and folders, packs them into a single image called a texture **Atlas**, and outputs the atlas image and data into a several different formats.
+Sprak collects images from files and folders, packs them into a single image called a texture **Atlas**, and outputs the atlas data into one or more files.
 
-When image files are packed into the atlas they are stored as **Sprites** and **Frames**.
+When images are packed into the atlas they are stored as **Sprites** and **Frames**.
 
 ### Atlas
 
-An atlas is both an _image_ and the _metadata_ about the sprites that were packed inside it. Sprak outputs the image as a PNG file and the data as a JSON file. These can be generated with the `--png` and `--json` options. A single ZIP file containing both the PNG and JSON data can be written with the `--zip` option.
+An atlas is both an _image_ and the _metadata_ about the images that were packed inside it. Sprak outputs the atlas image as a PNG file and the atlas data as a JSON file. These can be generated with the `--png` and `--json` options, respectively. A single ZIP file containing both the PNG and JSON data can be written with the `--zip` option.
 
-See the [sprak JSON schema](sprak.schema.json) for a full breakdown of the JSON format.
+See the [sprak JSON schema](sprak.schema.json) for a detailed description of the JSON format.
 
 ### Frame
 
@@ -80,7 +78,7 @@ A frame is a single image - either a standalone image, or a single frame in an a
 
 ### Sprite
 
-A sprite is a higher-order abstraction that contains one or more frames. A sprite may represent a complex asset, such as Mario with running and jumping animations. Or it may represent a simple asset, such as a brick block texture.
+A sprite is a higher-order abstraction that contains one or more frames. A sprite may represent a complex asset, such as Mario with running and jumping animations. Or it may represent a simple asset, such as a brick texture.
 
 ### Frame and sprite names
 
@@ -220,7 +218,7 @@ uvx sprak sprites --json atlas.json
 
 ### Aseprite files
 
-Sprak supports the Aseprite file format, and will extract frames, animations (using tags), and slices into the atlas.
+Sprak supports Aseprite files, and will extract frames, animations (using tags), and slices into the atlas.
 
 Aseprite must be installed for this to work. Sprak will search for an `aseprite` alias, as well as common install paths for both the vanilla and Steam distributions of Aseprite.
 
@@ -278,7 +276,9 @@ uvx sprak sprites --json atlas.json
 
 ## Exporting GIFs
 
-Sprak can export an animated GIF of the sprites being packed. This is useful for visualizing and debugging the sprite packing process. It is also just fun to watch.
+Sprak can export an animated GIF of the sprites being packed. This is useful for visualizing and debugging the sprite packing process.
+
+It is also just fun to watch.
 
 _**Warning:**_ _Saving large images with lots of sprites can cause you to run out of memory or produce very large GIFs that don't play back very well._
 
@@ -345,6 +345,14 @@ Build example files:
 ```sh
 uv run generate-examples.py
 ```
+
+## A note from Andrew
+
+**I created this for use in my own personal projects.** Features are added as I need them, bugs are fixed as my time allows, and version updates may introduce breaking changes.
+
+**I believe in sharing with, and learning from, others.** The world is a better place when that happens. The internet has given me many useful things for free, and so I'm giving this to you for free. I've also learned a lot from other people's code and hope that you are able to learn from this as well.
+
+**Humans are cool. AI sucks.** If you are using it in any capacity, then you are unwelcome to use any of my work as part of that process. Please use your own brain instead. You're smarter and more capable than the robot. I promise!
 
 ## Credits
 

@@ -5,3 +5,4 @@ dist/
 .idea/
 .venv/
 .ruff_cache/
+.zed/
