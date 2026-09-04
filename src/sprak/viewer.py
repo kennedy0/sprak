@@ -2,7 +2,7 @@ import json
 import tkinter as tk
 import zipfile
 from pathlib import Path
-from tkinter import ttk
+from tkinter import font, ttk
 
 from sprak.utils import is_image_file
 
@@ -51,7 +51,8 @@ def view_atlas(title: str, json_str: str, png_bytes: bytes) -> None:
     canvas = tk.Canvas(panes)
     panes.add(canvas, weight=1)
 
-    text = tk.Text(panes, font=("TkFixedFont", 12), wrap=tk.NONE)
+    font.nametofont("TkFixedFont").configure(size=12)
+    text = tk.Text(panes, font="TkFixedFont", wrap=tk.NONE)
     text.insert(tk.END, json_str)
     text.config(state=tk.DISABLED)
     panes.add(text, weight=0)
