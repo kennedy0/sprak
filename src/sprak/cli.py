@@ -60,7 +60,7 @@ def pack_sprites() -> None:
 
 
 def view_atlas() -> None:
-    parser = ArgumentParser(prog="sprak-viewer", description="View atlas image and metadata.")
+    parser = ArgumentParser(prog="sprak-view", description="View atlas image and metadata.")
     parser.add_argument(
         "atlas", nargs="+", help="the atlas file; can be either a single ZIP file, or separate JSON and PNG files"
     )
