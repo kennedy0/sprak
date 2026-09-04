@@ -296,7 +296,7 @@ uvx sprak examples/sprites --debug-gif atlas_debug.gif
 
 ## Viewer
 
-Sprak ships with a simple viewer application to view your atlas.
+Sprak ships with a simple `sprak-view` utility to view your atlas.
 
 ```sh
 # View an atlas packed as a ZIP file
@@ -309,6 +309,12 @@ uvx sprak-view examples/example.json examples/example.png
 ```
 
 ![img/sprak_viewer.png](img/sprak_viewer.png)
+
+Controls:
+
+- Click with the Left mouse button to select a frame
+- Click-and-drag with the Middle or Right mouse button to move the canvas
+- Press the Escape key to quit
 
 ## Using in a game
 
