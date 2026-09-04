@@ -306,16 +306,16 @@ If present, frame's `duration` property specifies the frame's duration in milise
 
 ## Viewer
 
-Sprak ships with a simple `sprak-view` utility to view your atlas.
+Sprak ships with a simple viewer utility to view your atlas.
 
 ```sh
 # View an atlas packed as a ZIP file
-uvx sprak-view examples/example.zip
+uvx sprak view examples/example.zip
 ```
 
 ```sh
 # View an atlas packed as separate JSON and PNG files
-uvx sprak-view examples/example.json examples/example.png
+uvx sprak view examples/example.json examples/example.png
 ```
 
 ![img/sprak_viewer.png](img/sprak_viewer.png)
