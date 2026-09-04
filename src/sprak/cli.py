@@ -75,6 +75,9 @@ def view_atlas() -> None:
 
 def _get_version_str() -> str:
     pyproject_toml = Path(__file__).parent.parent.parent / "pyproject.toml"
-    with pyproject_toml.open("rb") as fp:
-        data = tomllib.load(fp)
-        return data.get("project", {}).get("version", "")
+    if pyproject_toml.exists():
+        with pyproject_toml.open("rb") as fp:
+            data = tomllib.load(fp)
+            return data.get("project", {}).get("version", "")
+
+    return ""
