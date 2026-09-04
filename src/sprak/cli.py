@@ -2,16 +2,21 @@ import importlib.metadata
 import logging
 import sys
 import time
-import tomllib
 from argparse import ArgumentParser
-from pathlib import Path
 
 from sprak import pack
 from sprak.log import logger
 from sprak.viewer import view_atlas_json_and_png, view_atlas_zip
 
 
-def pack_sprites() -> None:
+def main() -> None:
+    if len(sys.argv) > 1 and sys.argv[1] == "view":
+        view_atlas(sys.argv[2:])
+    else:
+        pack_sprites(sys.argv[1:])
+
+
+def pack_sprites(argv: list[str]) -> None:
     parser = ArgumentParser(prog="sprak", description="Pack sprites into an atlas.")
     parser.add_argument("src", nargs="+", help="the source path(s) to scan for sprites")
     parser.add_argument("--fps", default=24, type=float, help="set GIF frame rate")
@@ -35,7 +40,7 @@ def pack_sprites() -> None:
         help="write packing animation with debug info to a GIF file",
     )
 
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args(argv)
 
     if not args.zip and not args.json and not args.png and not args.gif and not args.debug_gif:
         parser.error("at lest one output option is required")
@@ -60,25 +65,15 @@ def pack_sprites() -> None:
     logger.info(f"sprites packed in {round(time.time() - start, 3)}s")
 
 
-def view_atlas() -> None:
+def view_atlas(argv: list[str]) -> None:
     parser = ArgumentParser(prog="sprak-view", description="View atlas image and metadata.")
     parser.add_argument(
         "atlas", nargs="+", help="the atlas file; can be either a single ZIP file, or separate JSON and PNG files"
     )
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args(argv)
     if len(args.atlas) == 1:
         view_atlas_zip(args.atlas[0])
     elif len(args.atlas) == 2:
         view_atlas_json_and_png(args.atlas)
     else:
         parser.error("must provide either one ZIP file, or separate JSON and PNG files")
-
-
-def _get_version_str() -> str:
-    pyproject_toml = Path(__file__).parent.parent.parent / "pyproject.toml"
-    if pyproject_toml.exists():
-        with pyproject_toml.open("rb") as fp:
-            data = tomllib.load(fp)
-            return data.get("project", {}).get("version", "")
-
-    return ""

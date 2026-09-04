@@ -1,6 +1,6 @@
 [project]
 name = "sprak"
-version = "2.0.2"
+version = "2.0.3"
 description = "Pack sprites into a texture atlas"
 readme = "README.md"
 authors = [
@@ -12,8 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-sprak = "sprak.cli:pack_sprites"
-view = "sprak.cli:view_atlas"
+sprak = "sprak.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/kennedy0/sprak"
