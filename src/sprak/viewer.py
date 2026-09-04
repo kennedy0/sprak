@@ -67,18 +67,11 @@ def view_atlas(title: str, json_str: str, png_bytes: bytes) -> None:
     canvas.create_image(0, 0, image=image, anchor=tk.NW)
     canvas.delete(loading_text)
 
-    rect_id = None
-
     def _on_quit(event: tk.Event) -> None:
         root.destroy()
 
     def _on_click(event: tk.Event) -> None:
-        nonlocal rect_id
-
-        if rect_id:
-            canvas.delete(rect_id)
-            rect_id = None
-
+        canvas.delete("rect")
         text.tag_remove("highlight", "1.0", tk.END)
 
         x = canvas.canvasx(event.x)
@@ -93,13 +86,14 @@ def view_atlas(title: str, json_str: str, png_bytes: bytes) -> None:
                 text.see(highlight_start)
                 text.tag_add("highlight", highlight_start, highlight_end)
                 text.tag_configure("highlight", background="cyan")
-                rect_id = canvas.create_rectangle(
+                canvas.create_rectangle(
                     frame["x"],
                     frame["y"],
                     frame["x"] + frame["width"],
                     frame["y"] + frame["height"],
                     outline="red",
                     width=2,
+                    tags="rect",
                 )
 
     def _on_drag_start(event: tk.Event) -> None:
