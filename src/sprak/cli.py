@@ -1,3 +1,4 @@
+import importlib.metadata
 import logging
 import sys
 import time
@@ -21,7 +22,7 @@ def pack_sprites() -> None:
         default=0,
         help="set verbosity; can be used multiple times to increase verbosity",
     )
-    parser.add_argument("--version", action="version", version=_get_version_str())
+    parser.add_argument("--version", action="version", version=importlib.metadata.version("sprak"))
 
     group = parser.add_argument_group("output")
     group.add_argument("--zip", metavar="FILE", help="write atlas to a ZIP file")
