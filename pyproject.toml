@@ -1,6 +1,6 @@
 [project]
 name = "sprak"
-version = "1.7.0"
+version = "2.0.0"
 description = "Pack sprites into a texture atlas"
 readme = "README.md"
 authors = [
@@ -8,9 +8,12 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "aseprite-reader>=1.1.0",
-    "pillow>=12.1.1",
+    "pillow>=12.3",
 ]
+
+[project.scripts]
+sprak = "sprak.cli:pack_sprites"
+sprak-view = "sprak.cli:view_atlas"
 
 [project.urls]
 Homepage = "https://github.com/kennedy0/sprak"
@@ -18,11 +21,16 @@ Homepage = "https://github.com/kennedy0/sprak"
 [tool.ruff]
 line-length = 120
 
+[tool.ruff.lint]
+extend-select = ["N"]
+
 [build-system]
-requires = ["uv_build>=0.9.10,<0.10.0"]
+requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.15.1",
+    "pydantic>=2.13.5",
+    "ruff>=0.16.3",
+    "ty>=0.0.72",
 ]
