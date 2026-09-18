@@ -31,7 +31,7 @@ def is_aseprite_file(file: str | Path) -> bool:
 def read_json_data(aseprite_file: str | Path) -> dict:
     """Read the JSON data from an Aseprite file."""
     aseprite_file = Path(aseprite_file)
-    with NamedTemporaryFile() as tmp:
+    with NamedTemporaryFile(delete_on_close=False) as tmp:
         cmd = [get_aseprite_exe()]
         cmd += ["--batch"]
         cmd += ["--noinapp"]
