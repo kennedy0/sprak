@@ -66,7 +66,31 @@ class Sprite:
         return sprite
 
     @classmethod
-    def from_aseprite(cls, name: str, file: Path) -> Sprite:
+    def from_aseprite(cls, batch: list[tuple[str, Path]]) -> list[Sprite]:
+        sprites = []
+        aseprite_data = aseprite.batch_read_data(batch)
+
+        # ToDo: slices, animations
+
+        with TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            aseprite.batch_export_frames(batch, export_dir=tmp)
+            for name, _ in batch:
+                sprite = cls(name)
+                sprite_data = aseprite_data[name]
+                for frame_name, frame_data in sprite_data["frames"].items():
+                    frame_path = tmp / frame_data["rel_path"]
+                    frame = Frame(frame_name, frame_path)
+                    frame.frame_number = frame_data["frame_number"]
+                    frame.duration = int(frame_data["duration"])
+                    sprite.frames.append(frame)
+
+                sprites.append(sprite)
+
+        return sprites
+
+    @classmethod
+    def from_aseprite_OLD(cls, name: str, file: Path) -> Sprite:
         sprite = cls(name)
 
         # Get data from file

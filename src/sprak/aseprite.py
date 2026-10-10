@@ -9,6 +9,8 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 ASEPRITE_MAGIC_NUMBER = 0xA5E0
+EXPORT_FRAMES_SCRIPT_PATH = Path(__file__).parent / "lua" / "export_frames.lua"
+EXPORT_JSON_SCRIPT_PATH = Path(__file__).parent / "lua" / "export_json.lua"
 
 
 def is_aseprite_file(file: str | Path) -> bool:
@@ -59,6 +61,27 @@ def export_frames(aseprite_file: str | Path, sequence_path: str | Path) -> None:
     cmd += [aseprite_file.absolute().as_posix()]
     cmd += ["--save-as", first_sequence_file]
     subprocess.run(cmd, check=True)
+
+
+def batch_read_data(batch: list[tuple[str, Path]]) -> dict:
+    cmd = [get_aseprite_exe()]
+    cmd += ["--batch"]
+    cmd += ["--noinapp"]
+    for name, file in batch:
+        cmd += ["--script-param", f"{name}={file.absolute().as_posix()}"]
+    cmd += ["--script", EXPORT_JSON_SCRIPT_PATH.absolute().as_posix()]
+    result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+    return json.loads(result.stdout)
+
+
+def batch_export_frames(batch: list[tuple[str, Path]], export_dir: str | Path) -> None:
+    cmd = [get_aseprite_exe()]
+    cmd += ["--batch"]
+    cmd += ["--noinapp"]
+    for name, file in batch:
+        cmd += ["--script-param", f"{name}={file.absolute().as_posix()}"]
+    cmd += ["--script", EXPORT_FRAMES_SCRIPT_PATH.absolute().as_posix()]
+    subprocess.run(cmd, check=True, cwd=export_dir)
 
 
 @cache
