@@ -10,7 +10,6 @@ from tempfile import NamedTemporaryFile
 
 ASEPRITE_MAGIC_NUMBER = 0xA5E0
 EXPORT_FRAMES_SCRIPT_PATH = Path(__file__).parent / "lua" / "export_frames.lua"
-EXPORT_JSON_SCRIPT_PATH = Path(__file__).parent / "lua" / "export_json.lua"
 
 
 def is_aseprite_file(file: str | Path) -> bool:
