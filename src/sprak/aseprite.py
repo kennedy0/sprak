@@ -63,25 +63,18 @@ def export_frames(aseprite_file: str | Path, sequence_path: str | Path) -> None:
     subprocess.run(cmd, check=True)
 
 
-def batch_read_data(batch: list[tuple[str, Path]]) -> dict:
-    cmd = [get_aseprite_exe()]
-    cmd += ["--batch"]
-    cmd += ["--noinapp"]
-    for name, file in batch:
-        cmd += ["--script-param", f"{name}={file.absolute().as_posix()}"]
-    cmd += ["--script", EXPORT_JSON_SCRIPT_PATH.absolute().as_posix()]
-    result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-    return json.loads(result.stdout)
-
-
-def batch_export_frames(batch: list[tuple[str, Path]], export_dir: str | Path) -> None:
+def batch_export_frames(batch: list[tuple[str, Path]], export_dir: str | Path) -> dict:
+    """Export all frames from a batch of Aseprite files.
+    Returns JSON data with sprite and frame information.
+    """
     cmd = [get_aseprite_exe()]
     cmd += ["--batch"]
     cmd += ["--noinapp"]
     for name, file in batch:
         cmd += ["--script-param", f"{name}={file.absolute().as_posix()}"]
     cmd += ["--script", EXPORT_FRAMES_SCRIPT_PATH.absolute().as_posix()]
-    subprocess.run(cmd, check=True, cwd=export_dir)
+    result = subprocess.run(cmd, check=True, capture_output=True, text=True, cwd=export_dir)
+    return json.loads(result.stdout)
 
 
 @cache

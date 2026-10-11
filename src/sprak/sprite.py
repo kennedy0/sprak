@@ -68,21 +68,22 @@ class Sprite:
     @classmethod
     def from_aseprite(cls, batch: list[tuple[str, Path]]) -> list[Sprite]:
         sprites = []
-        aseprite_data = aseprite.batch_read_data(batch)
-
         # ToDo: slices, animations
 
         with TemporaryDirectory() as tmp:
             tmp = Path(tmp)
-            aseprite.batch_export_frames(batch, export_dir=tmp)
+            data = aseprite.batch_export_frames(batch, export_dir=tmp)
             for name, _ in batch:
                 sprite = cls(name)
-                sprite_data = aseprite_data[name]
+                sprite_data = data[name]
                 for frame_name, frame_data in sprite_data["frames"].items():
-                    frame_path = tmp / frame_data["rel_path"]
-                    frame = Frame(frame_name, frame_path)
-                    frame.frame_number = frame_data["frame_number"]
-                    frame.duration = int(frame_data["duration"])
+                    frame_number = frame_data["frame_number"]
+                    frame_duration = frame_data["duration"]
+                    frame_filepath = frame_data["filepath"]
+
+                    frame = Frame(frame_name, frame_filepath)
+                    frame.frame_number = frame_number
+                    frame.duration = frame_duration
                     sprite.frames.append(frame)
 
                 sprites.append(sprite)
