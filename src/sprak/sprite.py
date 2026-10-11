@@ -66,76 +66,71 @@ class Sprite:
         return sprite
 
     @classmethod
-    def from_aseprite(cls, name: str, file: Path) -> Sprite:
-        sprite = cls(name)
+    def from_aseprite(cls, batch: list[tuple[str, Path]]) -> list[Sprite]:
+        sprites = []
+        # ToDo: slices, animations
 
-        # Get data from file
-        aseprite_data = aseprite.read_json_data(file)
-        frame_data = aseprite_data["frames"]
-        tags = aseprite_data["meta"]["frameTags"]
-        tag_frame_ranges = {tag["name"]: range(tag["from"] + 1, tag["to"] + 2) for tag in tags}
-        slices = aseprite_data["meta"]["slices"]
-
-        # Warn about duplicate tags
-        duplicate_tags = {tag for tag in tags if tags.count(tag) > 1}
-        for tag in duplicate_tags:
-            logger.warning(f"duplicate '{tag}' tags found in {file.as_posix()}")
-
-        # Add animations from tags
-        for tag in tags:
-            sprite.animations[tag["name"]] = []
-
-        # Add 9-slice data
-        # There must be only a single frame and a single slice in the Aseprite file
-        if len(frame_data) == 1 and len(slices) == 1 and len(slices[0]["keys"]) == 1:
-            bounds = slices[0]["keys"][0].get("bounds")
-            center = slices[0]["keys"][0].get("center")
-            if bounds and center:
-                bounds = Rect(bounds["x"], bounds["y"], bounds["w"], bounds["h"])
-                center = Rect(center["x"], center["y"], center["w"], center["h"])
-
-                left_x = bounds.x
-                center_x = bounds.x + center.x
-                right_x = bounds.x + center.x + center.width
-
-                top_y = bounds.y
-                center_y = bounds.y + center.y
-                bottom_y = bounds.y + center.y + center.height
-
-                left_width = center_x - left_x
-                center_width = center.width
-                right_width = bounds.width - left_width - center_width
-
-                top_height = center_y - top_y
-                center_height = center.height
-                bottom_height = bounds.height - top_height - center_height
-
-                sprite.nine_slice = [
-                    Rect(left_x, top_y, left_width, top_height),  # top-left
-                    Rect(center_x, top_y, center_width, top_height),  # top-center
-                    Rect(right_x, top_y, right_width, top_height),  # top-right
-                    Rect(left_x, center_y, left_width, center_height),  # center-left
-                    Rect(center_x, center_y, center_width, center_height),  # center
-                    Rect(right_x, center_y, right_width, center_height),  # center-right
-                    Rect(left_x, bottom_y, left_width, bottom_height),  # bottom-left
-                    Rect(center_x, bottom_y, center_width, bottom_height),  # bottom-center
-                    Rect(right_x, bottom_y, right_width, bottom_height),  # bottom-right
-                ]
-
-        # Create a Frame from each frame in the Aseprite file
         with TemporaryDirectory() as tmp:
             tmp = Path(tmp)
-            sequence_path = tmp / (file.stem + ".%04d.png")
-            aseprite.export_frames(file, sequence_path)
-            for i, data in enumerate(frame_data, start=1):
-                frame_name = f"{name}.{i:04d}"
-                frame_path = sequence_path.absolute().as_posix() % i
-                frame = Frame(frame_name, frame_path)
-                frame.frame_number = i
-                frame.duration = data["duration"]
-                for tag, frame_range in tag_frame_ranges.items():
-                    if i in frame_range:
-                        sprite.animations[tag].append(frame)
-                sprite.frames.append(frame)
+            data = aseprite.batch_export_frames(batch, export_dir=tmp)
+            for name, _ in batch:
+                sprite = cls(name)
+                sprite_data = data[name]
 
-        return sprite
+                if frames := sprite_data["frames"]:
+                    for frame_name, frame_data in frames.items():
+                        frame_number = frame_data["frame_number"]
+                        frame_duration = frame_data["duration"]
+                        frame_filepath = frame_data["filepath"]
+
+                        frame = Frame(frame_name, frame_filepath)
+                        frame.frame_number = frame_number
+                        frame.duration = frame_duration
+                        sprite.frames.append(frame)
+
+                if tags := sprite_data["tags"]:
+                    for tag_name, tag_data in tags.items():
+                        sprite.animations[tag_name] = []
+                        tag_range = range(tag_data["from"], tag_data["to"] + 1)
+                        for frame in sprite.frames:
+                            if frame.frame_number in tag_range:
+                                sprite.animations[tag_name].append(frame)
+
+                if (slices := sprite_data["slices"]) and len(slices) == 1:
+                    bounds = slices[0].get("bounds")
+                    center = slices[0].get("center")
+                    if bounds and center:
+                        bounds = Rect(bounds["x"], bounds["y"], bounds["w"], bounds["h"])
+                        center = Rect(center["x"], center["y"], center["w"], center["h"])
+
+                        left_x = bounds.x
+                        center_x = bounds.x + center.x
+                        right_x = bounds.x + center.x + center.width
+
+                        top_y = bounds.y
+                        center_y = bounds.y + center.y
+                        bottom_y = bounds.y + center.y + center.height
+
+                        left_width = center_x - left_x
+                        center_width = center.width
+                        right_width = bounds.width - left_width - center_width
+
+                        top_height = center_y - top_y
+                        center_height = center.height
+                        bottom_height = bounds.height - top_height - center_height
+
+                        sprite.nine_slice = [
+                            Rect(left_x, top_y, left_width, top_height),  # top-left
+                            Rect(center_x, top_y, center_width, top_height),  # top-center
+                            Rect(right_x, top_y, right_width, top_height),  # top-right
+                            Rect(left_x, center_y, left_width, center_height),  # center-left
+                            Rect(center_x, center_y, center_width, center_height),  # center
+                            Rect(right_x, center_y, right_width, center_height),  # center-right
+                            Rect(left_x, bottom_y, left_width, bottom_height),  # bottom-left
+                            Rect(center_x, bottom_y, center_width, bottom_height),  # bottom-center
+                            Rect(right_x, bottom_y, right_width, bottom_height),  # bottom-right
+                        ]
+
+                sprites.append(sprite)
+
+        return sprites

@@ -32,6 +32,7 @@ class Atlas:
         self._image = Image.new("RGBA", (0, 0))
         self._current_folder: Path | None = None
         self._history: list[tuple[Frame, list[Rect]]] = []  # (frame_added, current_regions)
+        self._aseprite_batch: list[tuple[str, Path]] = []  # (sprite_name, file_path)
 
     def add_sprite(self, sprite: Sprite) -> None:
         if sprite.name in self.sprites:
@@ -50,7 +51,7 @@ class Atlas:
     def add_file(self, file: Path) -> None:
         name = self._get_sprite_name(file)
         if aseprite.is_aseprite_file(file):
-            self.add_sprite(Sprite.from_aseprite(name, file))
+            self._aseprite_batch.append((name, file))
         elif is_image_file(file):
             self.add_sprite(Sprite.from_image(name, file))
         else:
@@ -205,6 +206,8 @@ class Atlas:
         return file.with_suffix("").as_posix().strip("/")
 
     def _pack(self) -> None:
+        self._process_aseprite_batch()
+
         size = self._calculate_starting_size()
         frames = list(self.frames.values())
         frames.sort(key=lambda f: f.area, reverse=True)
@@ -252,6 +255,12 @@ class Atlas:
                 self._image.paste(frame.image, box=(frame.x, frame.y))
 
         self._is_packed = True
+
+    def _process_aseprite_batch(self) -> None:
+        for sprite in Sprite.from_aseprite(self._aseprite_batch):
+            self.add_sprite(sprite)
+
+        self._aseprite_batch.clear()
 
     def _calculate_starting_size(self) -> int:
         """Calculate the starting size of the atlas.
